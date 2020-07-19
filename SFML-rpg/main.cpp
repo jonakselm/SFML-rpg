@@ -1,8 +1,12 @@
 #include "stdafx.h"
+#include "Map.hpp"
 
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML-rpg");
+
+	Map map;
+	map.load("data/maps/test.json");
 
 	while (window.isOpen())
 	{
@@ -17,6 +21,7 @@ int main()
 			}
 		}
 		window.clear();
+		map.draw(window);
 		window.display();
 	}
 
