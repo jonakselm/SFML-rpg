@@ -24,19 +24,19 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
+    <ClCompile Include="Map/Layer.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="Tileset.cpp">
+    <ClCompile Include="Map/Map.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="Layer.cpp">
+    <ClCompile Include="Map/TextureTile.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="TileLayer.cpp">
+    <ClCompile Include="Map/TileLayer.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="TextureTile.cpp">
+    <ClCompile Include="Map/Tileset.cpp">
       <Filter>Map</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,19 +44,19 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Map.hpp">
+    <ClInclude Include="Map/Map.hpp">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="Layer.hpp">
+    <ClInclude Include="Map/Layer.hpp">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="Tileset.hpp">
+    <ClInclude Include="Map/TextureTile.hpp">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="TileLayer.hpp">
+    <ClInclude Include="Map/TileLayer.hpp">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="TextureTile.hpp">
+    <ClInclude Include="Map/Tileset.hpp">
       <Filter>Map</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Map.hpp"
+#include "Map/Map.hpp"
 #include <iostream>
 
 int main()
