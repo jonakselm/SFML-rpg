@@ -33,6 +33,12 @@
     <ClCompile Include="Layer.cpp">
       <Filter>Map</Filter>
     </ClCompile>
+    <ClCompile Include="TileLayer.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureTile.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -45,6 +51,12 @@
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Tileset.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TileLayer.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureTile.hpp">
       <Filter>Map</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,7 +12,13 @@ Tileset::~Tileset()
 void Tileset::load(const Json::Value &root)
 {
 	imagePath = "data/maps/" + root["image"].asString();
-	texture.loadFromFile(imagePath);
+
+	sf::Texture tempTexture;
+
+	if (!tempTexture.loadFromFile(imagePath))
+		exit(99);
+
+	texture = std::make_shared<sf::Texture>(tempTexture);
 
 	mapSize = sf::Vector2i(root["imagewidth"].asInt(), root["imageheight"].asInt());
 	tileSize = sf::Vector2i(root["tilewidth"].asInt(), root["tileheight"].asInt());
@@ -26,4 +32,17 @@ void Tileset::load(const Json::Value &root)
 	firstgid = root["firstgid"].asInt();
 
 	name = root["name"].asString();
+
+	for (unsigned int i = 0; i < root["tiles"].size(); i++)
+	{
+		Json::Value val = root["tiles"][i];
+		AnimatedTile aniTile;
+		aniTile.id = val["id"].asInt();
+		Json::Value aniVal = val["animation"];
+		for (unsigned int j = 0; j < aniVal.size(); j++)
+		{
+			aniTile.animation.push_back({ aniVal[j]["duration"].asInt64(), aniVal[j]["tileid"].asInt() });
+		}
+		animatedTiles.push_back(aniTile);
+	}
 }

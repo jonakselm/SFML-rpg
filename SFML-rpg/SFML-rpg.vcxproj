@@ -175,13 +175,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TileLayer.cpp" />
     <ClCompile Include="Tileset.cpp" />
+    <ClCompile Include="TextureTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Layer.hpp" />
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TileLayer.hpp" />
     <ClInclude Include="Tileset.hpp" />
+    <ClInclude Include="TextureTile.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
