@@ -8,7 +8,7 @@ public:
 	~TextureTile();
 
 	// Updates a tile if it is an animated tile
-	int update(const sf::Time &elapsedTime);
+	bool update(const sf::Time &elapsedTime);
 
 	// Returns true if the tileId is higher than 0 (which means nothing is in the tile)
 	bool load(int gid, const Tileset &tileset, const sf::Vector2i &gridPos);

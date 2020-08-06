@@ -10,7 +10,7 @@ TextureTile::~TextureTile()
 	m_texture = nullptr;
 }
 
-int TextureTile::update(const sf::Time &elapsedTime)
+bool TextureTile::update(const sf::Time &elapsedTime)
 {
 	m_timer += elapsedTime;
 	if (m_animated)
@@ -35,9 +35,9 @@ int TextureTile::update(const sf::Time &elapsedTime)
 		m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
 		m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
 
-		return m_aniCount + 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 bool TextureTile::load(int gid, const Tileset &tileset, const sf::Vector2i &gridPos)
