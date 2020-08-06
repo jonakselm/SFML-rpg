@@ -6,13 +6,6 @@ int main()
 {
 	sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML-rpg");
 
-    const int tiles[] = {
-        0, 1, 2, 3,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0
-    };
-
 	Map map;
 	map.load("data/maps/test.json", window.getSize());
 

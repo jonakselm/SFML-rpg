@@ -8,7 +8,7 @@ void TileLayer::update(const sf::Time &elapsedTime)
 		tile.update(elapsedTime);
 }
 
-void TileLayer::load(const Json::Value root, const std::vector<std::shared_ptr<Tileset>> &tilesets, const sf::Vector2i &mapSize)
+void TileLayer::load(const Json::Value root, const std::vector<Tileset> &tilesets, const sf::Vector2i &mapSize)
 {
 	Layer::load(root);
 
@@ -20,9 +20,9 @@ void TileLayer::load(const Json::Value root, const std::vector<std::shared_ptr<T
 		{
 			int gid = data[x + y * mapSize.x];
 
-			const Tileset &tileset = *tilesets[getTilesetIndex(gid, tilesets)];
+			const Tileset &tileset = tilesets[getTilesetIndex(gid, tilesets)];
 			TextureTile textureTile;
-			if (textureTile.load(gid, std::make_shared<Tileset>(tileset), sf::Vector2i(x, y)))
+			if (textureTile.load(gid, tileset, sf::Vector2i(x, y)))
 				m_tiles.push_back(std::move(textureTile));
 			else
 				if (count < 20)
@@ -45,12 +45,12 @@ void TileLayer::draw(sf::RenderTarget &target) const
 		tile.draw(target);
 }
 
-unsigned int TileLayer::getTilesetIndex(int gid, const std::vector<std::shared_ptr<Tileset>> &tilesets) const
+unsigned int TileLayer::getTilesetIndex(int gid, const std::vector<Tileset> &tilesets) const
 {
 	int tilesetIndex = 0;
 	for (const auto &tileset : tilesets)
 	{
-		if (!(gid > tileset->firstgid + tileset->tileCount - 1))
+		if (!(gid > tileset.firstgid + tileset.tileCount - 1))
 		{
 			return tilesetIndex;
 		}

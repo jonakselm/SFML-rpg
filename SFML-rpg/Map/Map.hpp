@@ -24,7 +24,7 @@ private:
 private:
 	sf::Clock m_clock;
 	sf::Time m_time;
-	std::vector<std::shared_ptr<Tileset>> m_tilesets;
+	std::vector<Tileset> m_tilesets;
 	std::vector<std::unique_ptr<Layer>> m_layers;
 	sf::Vector2i m_mapSize, m_tileSize;
 	// Sprites have the size of the initial texture

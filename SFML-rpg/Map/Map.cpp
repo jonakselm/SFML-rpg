@@ -77,7 +77,7 @@ void Map::loadTileset(const Json::Value &root)
 		Tileset tileset;
 		tileset.load(val);
 
-		m_tilesets.push_back(std::make_shared<Tileset>(tileset));
+		m_tilesets.push_back(tileset);
 	}
 }
 

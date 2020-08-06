@@ -23,7 +23,7 @@ public:
 
 	void load(const Json::Value &root);
 
-	std::shared_ptr<sf::Texture> texture;
+	sf::Texture texture;
 	std::string imagePath;
 	std::string name;
 	sf::Vector2i tileSize, mapSize;

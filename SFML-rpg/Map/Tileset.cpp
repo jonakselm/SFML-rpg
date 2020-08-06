@@ -13,12 +13,8 @@ void Tileset::load(const Json::Value &root)
 {
 	imagePath = "data/maps/" + root["image"].asString();
 
-	sf::Texture tempTexture;
-
-	if (!tempTexture.loadFromFile(imagePath))
+	if (!texture.loadFromFile(imagePath))
 		exit(99);
-
-	texture = std::make_shared<sf::Texture>(tempTexture);
 
 	mapSize = sf::Vector2i(root["imagewidth"].asInt(), root["imageheight"].asInt());
 	tileSize = sf::Vector2i(root["tilewidth"].asInt(), root["tileheight"].asInt());
