@@ -72,24 +72,74 @@ void Map::draw(sf::RenderTarget &target) const
 
 void Map::loadTileset(const Json::Value &root)
 {
-	for (const auto val : root["tilesets"])
+	for (const auto &val : root["tilesets"])
 	{
-		Tileset tileset;
-		tileset.load(val);
+		if (!val["image"].empty())
+		{
+			TilebasedTileset tileset;
+			tileset.load(val);
 
-		m_tilesets.push_back(tileset);
+			auto pTileset = std::make_unique<const TilebasedTileset>(tileset);
+
+			m_tilesets.push_back(std::move(pTileset));
+		}
+		else if (!val["source"].empty())
+		{
+			Json::Value newVal;
+			std::string sourcePath = "data/maps/" + val["source"].asString();
+
+			std::ifstream file(sourcePath);
+
+			file >> newVal;
+
+			if (newVal["grid"].empty())
+			{
+				TilebasedTileset tileset;
+				tileset.load(newVal);
+				tileset.firstgid = val["firstgid"].asInt();
+
+				auto pTileset = std::make_unique<const TilebasedTileset>(tileset);
+
+				m_tilesets.push_back(std::move(pTileset));
+			}
+			else
+			{
+				ImageTileset tileset;
+				tileset.load(newVal);
+				tileset.firstgid = val["firstgid"].asInt();
+
+				auto pTileset = std::make_unique<const ImageTileset>(tileset);
+
+				m_tilesets.push_back(std::move(pTileset));
+			}
+		}
+		else if (!val["grid"].empty())
+		{
+			ImageTileset tileset;
+			tileset.load(val);
+
+			auto pTileset = std::make_unique<const ImageTileset>(tileset);
+
+			m_tilesets.push_back(std::move(pTileset));
+		}
 	}
 }
 
 void Map::loadLayer(const Json::Value &root)
 {
-	for (const auto val : root["layers"])
+	for (const auto &val : root["layers"])
 	{
 		if (val["type"].asString() == "tilelayer")
 		{
 			TileLayer tLayer;
 			tLayer.load(val, m_tilesets, m_mapSize);
 			m_layers.push_back(std::make_unique<TileLayer>(tLayer));
+		}
+		else if (val["type"].asString() == "objectgroup")
+		{
+			ObjectLayer oLayer;
+			oLayer.load(val, m_tilesets, m_mapSize);
+			m_layers.push_back(std::make_unique<ObjectLayer>(oLayer));
 		}
 		else if (val["type"].asString() == "group")
 		{

@@ -169,6 +169,7 @@
     <ClCompile Include="Map/Layer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map/Map.cpp" />
+    <ClCompile Include="Map\ObjectLayer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -182,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="Map/Layer.hpp" />
     <ClInclude Include="Map/Map.hpp" />
+    <ClInclude Include="Map\ObjectLayer.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Map/TileLayer.hpp" />
     <ClInclude Include="Map/Tileset.hpp" />

@@ -7,10 +7,11 @@ TextureTile::TextureTile()
 
 TextureTile::~TextureTile()
 {
-	m_texture = nullptr;
+	m_pTileset = nullptr;
+	m_pTexture = nullptr;
 }
 
-bool TextureTile::update(const sf::Time &elapsedTime)
+bool TextureTile::updateTile(const sf::Time &elapsedTime)
 {
 	m_timer += elapsedTime;
 	if (m_animated)
@@ -26,7 +27,9 @@ bool TextureTile::update(const sf::Time &elapsedTime)
 
 		int localTileId = m_aniTile.animation[m_aniCount].tileId;
 
-		sf::IntRect textureRect = getTextureRect(localTileId, (*m_tileset), m_tileset->tileSize);
+		const TilebasedTileset *pTileset = dynamic_cast<const TilebasedTileset *>(m_pTileset);
+
+		sf::FloatRect textureRect = getTextureRect(localTileId, (*m_pTileset), pTileset->tileSize);
 		int textureRight = textureRect.left + textureRect.width,
 			textureBottom = textureRect.top + textureRect.height;
 
@@ -40,37 +43,114 @@ bool TextureTile::update(const sf::Time &elapsedTime)
 	return false;
 }
 
-bool TextureTile::load(int gid, const Tileset &tileset, const sf::Vector2i &gridPos)
+bool TextureTile::updateObject(const sf::Time &elapsedTime)
+{
+	m_timer += elapsedTime;
+	if (m_animated)
+	{
+		if (m_timer.asMilliseconds() > m_aniTile.animation[m_aniCount].duration)
+		{
+			m_aniCount++;
+			if (m_aniCount >= m_aniTile.animation.size())
+				m_aniCount = 0;
+
+			m_timer = sf::Time::Zero;
+		}
+
+		int localTileId = m_aniTile.animation[m_aniCount].tileId;
+
+		const ImageTileset *pTileset = dynamic_cast<const ImageTileset *>(m_pTileset);
+
+		const ImageTile &imageTile = pTileset->imageTiles[localTileId];
+
+		m_pTexture = &imageTile.texture;
+
+		sf::FloatRect textureRect = getTextureRect(localTileId, (*m_pTileset), imageTile.imageSize);
+		int textureRight = textureRect.left + textureRect.width,
+			textureBottom = textureRect.top + textureRect.height;
+
+		m_vertices[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
+		m_vertices[1].texCoords = sf::Vector2f(textureRight, textureRect.top);
+		m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
+		m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
+
+		return true;
+	}
+	return false;
+}
+
+bool TextureTile::load(int gid, const TilebasedTileset &tileset, const sf::Vector2i &gridPos)
+{
+	m_localTileId = gid - tileset.firstgid;
+
+	m_pTexture = &tileset.texture;
+
+	int left = gridPos.x * tileset.tileSize.x, top = gridPos.y * tileset.tileSize.x;
+
+	auto rect = sf::FloatRect(left, top, tileset.tileSize.x, tileset.tileSize.y);
+
+	if (genericLoad(gid, tileset, rect))
+		return true;
+
+	return false;
+}
+
+bool TextureTile::load(int gid, const ImageTileset &tileset, const sf::FloatRect &rect, bool isTemplate)
+{
+	m_localTileId = gid;
+	if (isTemplate)
+		m_localTileId--;
+
+	if (gid >= tileset.firstgid && gid <= tileset.firstgid + tileset.tileCount)
+	{
+		m_localTileId -= tileset.firstgid;
+
+		m_pTexture = &tileset.imageTiles[m_localTileId].texture;
+	}
+	else if (gid < tileset.firstgid)
+	{
+		m_pTexture = &tileset.imageTiles[m_localTileId].texture;
+	}
+
+	if (genericLoad(gid, tileset, rect))
+		return true;
+
+	return false;
+}
+
+void TextureTile::draw(sf::RenderTarget &target) const
+{
+	target.draw(m_vertices, EDGE_COUNT, sf::Quads, m_pTexture);
+}
+
+bool TextureTile::genericLoad(int gid, const GenericTileset &tileset, const sf::FloatRect &rect)
 {
 	if (gid <= 0)
 		return false;
 
-	m_tileset = &tileset;
-	m_texture = &tileset.texture;
+	m_pTileset = &tileset;
 
-	int localTileId = gid - tileset.firstgid;
+	float right = rect.left + rect.width, bottom = rect.top + rect.height;
 
-	int left = gridPos.x * tileset.tileSize.x, top = gridPos.y * tileset.tileSize.x,
-		right = (gridPos.x + 1) * tileset.tileSize.x, bottom = (gridPos.y + 1) * tileset.tileSize.y;
-
-	m_vertices[0].position = sf::Vector2f(left, top);
-	m_vertices[1].position = sf::Vector2f(right, top);
+	m_vertices[0].position = sf::Vector2f(rect.left, rect.top);
+	m_vertices[1].position = sf::Vector2f(right, rect.top);
 	m_vertices[2].position = sf::Vector2f(right, bottom);
-	m_vertices[3].position = sf::Vector2f(left, bottom);
+	m_vertices[3].position = sf::Vector2f(rect.left, bottom);
 
-	for (const auto &aniTile : tileset.animatedTiles)
+	sf::Vector2f tileSize;
+
+	if (dynamic_cast<const TilebasedTileset *>(&tileset))
 	{
-		if (localTileId == aniTile.id)
-		{
-			m_animated = true;
-			m_aniTile = aniTile;
-
-			localTileId = m_aniTile.animation[m_aniCount].tileId;
-			break;
-		}
+		const TilebasedTileset *pTileset = dynamic_cast<const TilebasedTileset *>(&tileset);
+		tileSize = pTileset->tileSize;
+	}
+	else if (dynamic_cast<const ImageTileset *>(&tileset))
+	{
+		const ImageTileset *pTileset = dynamic_cast<const ImageTileset *>(&tileset);
+		tileSize = pTileset->imageTiles[m_localTileId].imageSize;
 	}
 
-	sf::IntRect textureRect = getTextureRect(localTileId, tileset, tileset.tileSize);
+	sf::FloatRect textureRect = getTextureRect(m_localTileId, tileset, tileSize);
 	int textureRight = textureRect.left + textureRect.width,
 		textureBottom = textureRect.top + textureRect.height;
 
@@ -79,17 +159,30 @@ bool TextureTile::load(int gid, const Tileset &tileset, const sf::Vector2i &grid
 	m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
 	m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
 
+	for (const auto &aniTile : tileset.animatedTiles)
+	{
+		if (m_localTileId == aniTile.id)
+		{
+			m_animated = true;
+			m_aniTile = aniTile;
+
+			m_localTileId = m_aniTile.animation[m_aniCount].tileId;
+			break;
+		}
+	}
+
 	return true;
 }
 
-void TextureTile::draw(sf::RenderTarget &target) const
+sf::FloatRect TextureTile::getTextureRect(int localTileId, const GenericTileset &tileset, const sf::Vector2f &tileSize) const
 {
-	target.draw(m_vertices, EDGE_COUNT, sf::Quads, m_texture);
-}
+	int x = 0, y = 0;
+	if (dynamic_cast<const TilebasedTileset*>(&tileset))
+	{
+		const TilebasedTileset &tTileset = *(dynamic_cast<const TilebasedTileset *>(&tileset));
+		x = localTileId % tTileset.columns;
+		y = localTileId / tTileset.columns;
+	}
 
-sf::IntRect TextureTile::getTextureRect(int localTileId, const Tileset &tileset, const sf::Vector2i &tileSize) const
-{
-	int x = localTileId % tileset.columns, y = localTileId / tileset.columns;
-
-	return sf::IntRect(x * tileSize.x, y * tileSize.y, tileSize.x, tileSize.y);
+	return sf::FloatRect(x * tileSize.x, y * tileSize.y, tileSize.x, tileSize.y);
 }

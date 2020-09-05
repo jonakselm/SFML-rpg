@@ -4,6 +4,7 @@
 #include "TileLayer.hpp"
 #include <vector>
 #include "TextureTile.hpp"
+#include "ObjectLayer.hpp"
 
 class Map
 {
@@ -24,7 +25,7 @@ private:
 private:
 	sf::Clock m_clock;
 	sf::Time m_time;
-	std::vector<Tileset> m_tilesets;
+	std::vector<std::unique_ptr<const GenericTileset>> m_tilesets;
 	std::vector<std::unique_ptr<Layer>> m_layers;
 	sf::Vector2i m_mapSize, m_tileSize;
 	// Sprites have the size of the initial texture

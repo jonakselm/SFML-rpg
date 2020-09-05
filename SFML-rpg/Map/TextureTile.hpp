@@ -8,21 +8,25 @@ public:
 	~TextureTile();
 
 	// Updates a tile if it is an animated tile
-	bool update(const sf::Time &elapsedTime);
+	bool updateTile(const sf::Time &elapsedTime);
+	bool updateObject(const sf::Time &elapsedTime);
 
 	// Returns true if the tileId is higher than 0 (which means nothing is in the tile)
-	bool load(int gid, const Tileset &tileset, const sf::Vector2i &gridPos);
+	bool load(int gid, const TilebasedTileset &tileset, const sf::Vector2i &gridPos);
+	// Returns true if the tileId is higher than 0 (which means nothing is in the tile)
+	bool load(int gid, const ImageTileset &tileset, const sf::FloatRect &rect, bool isTemplate);
 
 	void draw(sf::RenderTarget &target) const;
 
 private:
-	sf::IntRect getTextureRect(int localTileId, const Tileset &tileset, const sf::Vector2i &tileSize) const;
+	bool genericLoad(int gid, const GenericTileset &tileset, const sf::FloatRect &rect);
+	sf::FloatRect getTextureRect(int localTileId, const GenericTileset &tileset, const sf::Vector2f &tileSize) const;
 
 private:
 	static constexpr int EDGE_COUNT = 4;
 	sf::Vertex m_vertices[EDGE_COUNT];
-	const Tileset *m_tileset;
-	const sf::Texture *m_texture;
+	const GenericTileset *m_pTileset;
+	const sf::Texture *m_pTexture;
 	bool m_animated = false;
 	AnimatedTile m_aniTile;
 	int m_aniCount = 0;

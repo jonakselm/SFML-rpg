@@ -39,6 +39,9 @@
     <ClCompile Include="Map/Tileset.cpp">
       <Filter>Map</Filter>
     </ClCompile>
+    <ClCompile Include="Map\ObjectLayer.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -57,6 +60,9 @@
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Map/Tileset.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\ObjectLayer.hpp">
       <Filter>Map</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Map/Map.hpp"
 #include <iostream>
+#include <Windows.h>
 
 int main()
 {
@@ -32,6 +33,8 @@ int main()
 		window.display();
 
 		std::cout << "Frame duration: " << time.asSeconds() << "s" << std::endl;
+		std::wstring wstr = std::to_wstring(1000000 / time.asMicroseconds());
+		SetWindowText(window.getSystemHandle(), wstr.c_str());
 	}
 
 	return 0;
