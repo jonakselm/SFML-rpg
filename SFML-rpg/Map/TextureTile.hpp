@@ -14,7 +14,7 @@ public:
 	// Returns true if the tileId is higher than 0 (which means nothing is in the tile)
 	bool load(int gid, const TilebasedTileset &tileset, const sf::Vector2i &gridPos);
 	// Returns true if the tileId is higher than 0 (which means nothing is in the tile)
-	bool load(int gid, const ImageTileset &tileset, const sf::FloatRect &rect, bool isTemplate);
+	bool load(const TileTemplate &tTemplate, const sf::FloatRect &rect, bool isTemplate);
 
 	void draw(sf::RenderTarget &target) const;
 

@@ -44,6 +44,8 @@ bool TextureTile::updateTile(const sf::Time &elapsedTime)
 
 bool TextureTile::updateObject(const sf::Time &elapsedTime)
 {
+	//m_transformable.rotate(1);
+	//m_states.transform = m_transformable.getTransform();
 	m_timer += elapsedTime;
 	if (m_animated)
 	{
@@ -84,9 +86,10 @@ bool TextureTile::load(int gid, const TilebasedTileset &tileset, const sf::Vecto
 
 	m_states.texture = &tileset.texture;
 
-	int left = gridPos.x * tileset.tileSize.x, top = gridPos.y * tileset.tileSize.x;
+	// Using bottom left since tiled uses bottom left
+	int left = gridPos.x * tileset.tileSize.x, bottom = (gridPos.y + 1) * tileset.tileSize.x;
 
-	auto rect = sf::FloatRect(left, top, tileset.tileSize.x, tileset.tileSize.y);
+	auto rect = sf::FloatRect(left, bottom, tileset.tileSize.x, tileset.tileSize.y);
 
 	if (genericLoad(gid, tileset, rect))
 		return true;
@@ -94,11 +97,14 @@ bool TextureTile::load(int gid, const TilebasedTileset &tileset, const sf::Vecto
 	return false;
 }
 
-bool TextureTile::load(int gid, const ImageTileset &tileset, const sf::FloatRect &rect, bool isTemplate)
+bool TextureTile::load(const TileTemplate &tTemplate, const sf::FloatRect &rect, bool isTemplate)
 {
-	m_localTileId = gid;
+	m_localTileId = tTemplate.gid;
 	if (isTemplate)
 		m_localTileId--;
+
+	const int gid = tTemplate.gid;
+	const ImageTileset &tileset = *tTemplate.pTileset;
 
 	if (gid >= tileset.firstgid && gid <= tileset.firstgid + tileset.tileCount)
 	{
@@ -110,6 +116,7 @@ bool TextureTile::load(int gid, const ImageTileset &tileset, const sf::FloatRect
 	{
 		m_states.texture = &tileset.imageTiles[m_localTileId].texture;
 	}
+	m_transformable.setRotation(tTemplate.rotation);
 
 	if (genericLoad(gid, tileset, rect))
 		return true;
@@ -129,7 +136,10 @@ bool TextureTile::genericLoad(int gid, const GenericTileset &tileset, const sf::
 
 	m_pTileset = &tileset;
 
-	float right = tileset.tileSize.x, bottom = tileset.tileSize.y;
+	float right = rect.width, bottom = rect.height * 2;
+
+	// Tiled starts from bottom left (setting the origin to bottom left)
+	m_transformable.setOrigin(0, rect.height);
 
 	m_vertices[0].position = sf::Vector2f(0, 0);
 	m_vertices[1].position = sf::Vector2f(rect.width, 0);
