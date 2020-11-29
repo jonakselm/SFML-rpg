@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TextureTile.hpp"
+#include <iostream>
 
 TextureTile::TextureTile()
 {
@@ -8,7 +9,6 @@ TextureTile::TextureTile()
 TextureTile::~TextureTile()
 {
 	m_pTileset = nullptr;
-	m_pTexture = nullptr;
 }
 
 bool TextureTile::updateTile(const sf::Time &elapsedTime)
@@ -63,7 +63,7 @@ bool TextureTile::updateObject(const sf::Time &elapsedTime)
 
 		const ImageTile &imageTile = pTileset->imageTiles[localTileId];
 
-		m_pTexture = &imageTile.texture;
+		m_states.texture = &imageTile.texture;
 
 		sf::FloatRect textureRect = getTextureRect(localTileId, (*m_pTileset), imageTile.imageSize);
 		int textureRight = textureRect.left + textureRect.width,
@@ -73,6 +73,7 @@ bool TextureTile::updateObject(const sf::Time &elapsedTime)
 		m_vertices[1].texCoords = sf::Vector2f(textureRight, textureRect.top);
 		m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
 		m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
+		std::cout << textureRect.width << ", " << textureRect.height << std::endl;
 
 		return true;
 	}
@@ -83,7 +84,7 @@ bool TextureTile::load(int gid, const TilebasedTileset &tileset, const sf::Vecto
 {
 	m_localTileId = gid - tileset.firstgid;
 
-	m_pTexture = &tileset.texture;
+	m_states.texture = &tileset.texture;
 
 	int left = gridPos.x * tileset.tileSize.x, top = gridPos.y * tileset.tileSize.x;
 
@@ -105,11 +106,11 @@ bool TextureTile::load(int gid, const ImageTileset &tileset, const sf::FloatRect
 	{
 		m_localTileId -= tileset.firstgid;
 
-		m_pTexture = &tileset.imageTiles[m_localTileId].texture;
+		m_states.texture = &tileset.imageTiles[m_localTileId].texture;
 	}
 	else if (gid < tileset.firstgid)
 	{
-		m_pTexture = &tileset.imageTiles[m_localTileId].texture;
+		m_states.texture = &tileset.imageTiles[m_localTileId].texture;
 	}
 
 	if (genericLoad(gid, tileset, rect))
@@ -120,7 +121,7 @@ bool TextureTile::load(int gid, const ImageTileset &tileset, const sf::FloatRect
 
 void TextureTile::draw(sf::RenderTarget &target) const
 {
-	target.draw(m_vertices, EDGE_COUNT, sf::Quads, m_pTexture);
+	target.draw(m_vertices, EDGE_COUNT, sf::Quads, m_states);
 }
 
 bool TextureTile::genericLoad(int gid, const GenericTileset &tileset, const sf::FloatRect &rect)
@@ -130,12 +131,14 @@ bool TextureTile::genericLoad(int gid, const GenericTileset &tileset, const sf::
 
 	m_pTileset = &tileset;
 
-	float right = rect.left + rect.width, bottom = rect.top + rect.height;
+	float right = tileset.tileSize.x, bottom = tileset.tileSize.y;
 
-	m_vertices[0].position = sf::Vector2f(rect.left, rect.top);
-	m_vertices[1].position = sf::Vector2f(right, rect.top);
-	m_vertices[2].position = sf::Vector2f(right, bottom);
-	m_vertices[3].position = sf::Vector2f(rect.left, bottom);
+	m_vertices[0].position = sf::Vector2f(0, 0);
+	m_vertices[1].position = sf::Vector2f(rect.width, 0);
+	m_vertices[2].position = sf::Vector2f(rect.width, rect.height);
+	m_vertices[3].position = sf::Vector2f(0, rect.height);
+
+	m_transformable.setPosition(rect.left, rect.top);
 
 	sf::Vector2f tileSize;
 
@@ -170,6 +173,8 @@ bool TextureTile::genericLoad(int gid, const GenericTileset &tileset, const sf::
 			break;
 		}
 	}
+
+	m_states.transform = m_transformable.getTransform();
 
 	return true;
 }

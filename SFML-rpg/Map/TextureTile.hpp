@@ -26,7 +26,8 @@ private:
 	static constexpr int EDGE_COUNT = 4;
 	sf::Vertex m_vertices[EDGE_COUNT];
 	const GenericTileset *m_pTileset;
-	const sf::Texture *m_pTexture;
+	sf::RenderStates m_states;
+	sf::Transformable m_transformable;
 	bool m_animated = false;
 	AnimatedTile m_aniTile;
 	int m_aniCount = 0;
