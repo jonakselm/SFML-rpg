@@ -8,9 +8,9 @@ void TileLayer::update(const sf::Time &elapsedTime)
 		tile.updateTile(elapsedTime);
 }
 
-void TileLayer::load(const Json::Value root, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets, const sf::Vector2i &mapSize)
+void TileLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets, const sf::Vector2i &mapSize)
 {
-	Layer::load(root);
+	Layer::load(root, layerGroup);
 	data.reserve(root["data"].size());
 	for (unsigned int i = 0; i < root["data"].size(); i++)
 	{

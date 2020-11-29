@@ -20,7 +20,7 @@ public:
 	ObjectLayer() = default;
 	~ObjectLayer() = default;
 
-	void load(const Json::Value root, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets,
+	void load(const Json::Value root, const std::string &layerGroup, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets,
 		const sf::Vector2i &mapSize);
 
 	void update(const sf::Time &elapsedTime);

@@ -10,5 +10,4 @@
 #include <SFML/Network.hpp>
 #include <SFML/Window.hpp>
 
-#include <filesystem>
 #include <fstream>

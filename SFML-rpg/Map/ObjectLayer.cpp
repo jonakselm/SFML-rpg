@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "ObjectLayer.hpp"
 
-void ObjectLayer::load(const Json::Value root, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets, const sf::Vector2i &mapSize)
+void ObjectLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets, const sf::Vector2i &mapSize)
 {
-	Layer::load(root);
+	Layer::load(root, layerGroup);
 
 	for (unsigned int i = 0; i < root["objects"].size(); i++)
 	{

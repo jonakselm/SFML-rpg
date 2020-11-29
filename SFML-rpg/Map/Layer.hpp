@@ -7,7 +7,7 @@ public:
 	Layer() = default;
 	virtual ~Layer() = default;
 
-	virtual void load(const Json::Value &root);
+	virtual void load(const Json::Value &root, const std::string &group);
 
 	virtual void draw(sf::RenderTarget &target) const = 0;
 
@@ -16,6 +16,7 @@ public:
 	int id;
 	std::string type;
 	std::string name;
+	std::string group;
 	sf::Vector2i size;
 	float opacity;
 	bool visible;

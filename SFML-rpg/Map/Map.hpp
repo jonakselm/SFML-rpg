@@ -20,7 +20,7 @@ public:
 
 private:
 	void loadTileset(const Json::Value &root);
-	void loadLayer(const Json::Value &root);
+	void loadLayer(const Json::Value &root, const std::string &layerGroup = "none");
 
 private:
 	sf::Clock m_clock;

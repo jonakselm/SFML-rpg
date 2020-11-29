@@ -125,25 +125,25 @@ void Map::loadTileset(const Json::Value &root)
 	}
 }
 
-void Map::loadLayer(const Json::Value &root)
+void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 {
 	for (const auto &val : root["layers"])
 	{
 		if (val["type"].asString() == "tilelayer")
 		{
 			TileLayer tLayer;
-			tLayer.load(val, m_tilesets, m_mapSize);
+			tLayer.load(val, layerGroup, m_tilesets, m_mapSize);
 			m_layers.push_back(std::make_unique<TileLayer>(tLayer));
 		}
 		else if (val["type"].asString() == "objectgroup")
 		{
 			ObjectLayer oLayer;
-			oLayer.load(val, m_tilesets, m_mapSize);
+			oLayer.load(val, layerGroup, m_tilesets, m_mapSize);
 			m_layers.push_back(std::make_unique<ObjectLayer>(oLayer));
 		}
 		else if (val["type"].asString() == "group")
 		{
-			loadLayer(val);
+			loadLayer(val, val["name"].asString());
 		}
 	}
 }
