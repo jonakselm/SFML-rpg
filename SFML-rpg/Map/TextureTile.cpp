@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "TextureTile.hpp"
-#include <iostream>
 
 TextureTile::TextureTile()
 {
@@ -73,7 +72,6 @@ bool TextureTile::updateObject(const sf::Time &elapsedTime)
 		m_vertices[1].texCoords = sf::Vector2f(textureRight, textureRect.top);
 		m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
 		m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
-		std::cout << textureRect.width << ", " << textureRect.height << std::endl;
 
 		return true;
 	}
