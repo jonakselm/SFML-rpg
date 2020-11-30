@@ -76,10 +76,8 @@ void Map::loadTileset(const Json::Value &root)
 	{
 		if (!val["image"].empty())
 		{
-			TilebasedTileset tileset;
-			tileset.load(val);
-
-			auto pTileset = std::make_unique<const TilebasedTileset>(tileset);
+			std::unique_ptr<TilebasedTileset> pTileset;
+			pTileset->load(val);
 
 			m_tilesets.push_back(std::move(pTileset));
 		}
@@ -94,31 +92,25 @@ void Map::loadTileset(const Json::Value &root)
 
 			if (newVal["grid"].empty())
 			{
-				TilebasedTileset tileset;
-				tileset.load(newVal);
-				tileset.firstgid = val["firstgid"].asInt();
-
-				auto pTileset = std::make_unique<const TilebasedTileset>(tileset);
+				std::unique_ptr<TilebasedTileset> pTileset;
+				pTileset->load(newVal);
+				pTileset->firstgid = val["firstgid"].asInt();
 
 				m_tilesets.push_back(std::move(pTileset));
 			}
 			else
 			{
-				ImageTileset tileset;
-				tileset.load(newVal);
-				tileset.firstgid = val["firstgid"].asInt();
-
-				auto pTileset = std::make_unique<const ImageTileset>(tileset);
+				std::unique_ptr<ImageTileset> pTileset;
+				pTileset->load(newVal);
+				pTileset->firstgid = val["firstgid"].asInt();
 
 				m_tilesets.push_back(std::move(pTileset));
 			}
 		}
 		else if (!val["grid"].empty())
 		{
-			ImageTileset tileset;
-			tileset.load(val);
-
-			auto pTileset = std::make_unique<const ImageTileset>(tileset);
+			std::unique_ptr<ImageTileset> pTileset;
+			pTileset->load(val);
 
 			m_tilesets.push_back(std::move(pTileset));
 		}
@@ -131,15 +123,22 @@ void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 	{
 		if (val["type"].asString() == "tilelayer")
 		{
-			TileLayer tLayer;
-			tLayer.load(val, layerGroup, m_tilesets, m_mapSize);
-			m_layers.push_back(std::make_unique<TileLayer>(tLayer));
+			std::unique_ptr<TileLayer> pLayer;
+			pLayer->load(val, layerGroup, m_tilesets, m_mapSize);
+			m_layers.push_back(std::move(pLayer));
 		}
 		else if (val["type"].asString() == "objectgroup")
 		{
-			ObjectLayer oLayer;
-			oLayer.load(val, layerGroup, m_tilesets, m_mapSize);
-			m_layers.push_back(std::make_unique<ObjectLayer>(oLayer));
+			if (val["name"].asString() == "EntityLayer")
+			{
+
+			}
+			else
+			{
+				std::unique_ptr<ObjectLayer> pLayer;
+				pLayer->load(val, layerGroup, m_tilesets, m_mapSize);
+				m_layers.push_back(std::move(pLayer));
+			}
 		}
 		else if (val["type"].asString() == "group")
 		{

@@ -29,4 +29,5 @@ public:
 
 private:
 	std::vector<Object> m_objects;
+	std::vector<std::unique_ptr<Object>> m_objects;
 };

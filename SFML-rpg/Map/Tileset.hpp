@@ -31,6 +31,11 @@ public:
 	GenericTileset() = default;
 	virtual ~GenericTileset() = default;
 
+	GenericTileset(const GenericTileset &) = delete;
+	GenericTileset(GenericTileset &) = delete;
+	GenericTileset &operator=(const GenericTileset &) = delete;
+	GenericTileset &operator=(GenericTileset &) = delete;
+
 	virtual void load(const Json::Value &root) = 0;
 
 	std::string name;

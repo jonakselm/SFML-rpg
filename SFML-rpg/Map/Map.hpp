@@ -12,6 +12,9 @@ public:
 	Map();
 	~Map();
 
+	Map(const Map &) = delete;
+	Map(Map &) = delete;
+
 	bool load(const std::string &filename, const sf::Vector2u &windowSize);
 
 	void update(const sf::Time &elapsedTime);

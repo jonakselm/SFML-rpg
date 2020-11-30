@@ -8,28 +8,29 @@ void ObjectLayer::load(const Json::Value root, const std::string &layerGroup, co
 	for (unsigned int i = 0; i < root["objects"].size(); i++)
 	{
 		Json::Value val = root["objects"][i];
-		Object object;
-		object.id = val["id"].asInt();
-		object.pos = { val["x"].asFloat(), val["y"].asFloat() };
-		TileTemplate &tTemplate = object.tileTemplate;
+		std::unique_ptr<Object> pObject;
+		pObject->id = val["id"].asInt();
+		pObject->pos = { val["x"].asFloat(), val["y"].asFloat() };
+		TileTemplate &tTemplate = pObject->tileTemplate;
 		tTemplate.load(val, tilesets);
 
-		sf::FloatRect rect = { object.pos, tTemplate.templateSize };
+		sf::FloatRect rect = { pObject->pos, tTemplate.templateSize };
 		bool isTemplate = tTemplate.type == "template";
-		object.tile.load(tTemplate, rect, isTemplate);
+		pObject->tile.load(tTemplate, rect, isTemplate);
 
-		m_objects.push_back(object);
+		m_objects.push_back(std::move(pObject));
 	}
 }
 
 void ObjectLayer::update(const sf::Time &elapsedTime)
 {
 	for (auto &object : m_objects)
-		object.tile.updateObject(elapsedTime);
+		object->tile.updateObject(elapsedTime);
 }
 
 void ObjectLayer::draw(sf::RenderTarget &target) const
 {
 	for (const auto &object : m_objects)
-		object.tile.draw(target);
+		object->tile.draw(target);
+}
 }

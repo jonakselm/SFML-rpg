@@ -17,5 +17,5 @@ public:
 
 private:
 	std::vector<int> data;
-	std::vector<TextureTile> m_tiles;
+	std::vector<std::unique_ptr<TextureTile>> m_tiles;
 };

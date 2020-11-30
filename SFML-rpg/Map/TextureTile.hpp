@@ -7,6 +7,11 @@ public:
 	TextureTile();
 	~TextureTile();
 
+	TextureTile(const TextureTile &) = delete;
+	TextureTile(TextureTile &) = delete;
+	TextureTile &operator=(const TextureTile &) = delete;
+	TextureTile &operator=(TextureTile &) = delete;
+
 	// Updates a tile if it is an animated tile
 	bool updateTile(const sf::Time &elapsedTime);
 	bool updateObject(const sf::Time &elapsedTime);

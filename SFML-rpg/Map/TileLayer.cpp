@@ -4,8 +4,8 @@
 
 void TileLayer::update(const sf::Time &elapsedTime)
 {
-	for (auto &tile : m_tiles)
-		tile.updateTile(elapsedTime);
+	for (auto &pTile : m_tiles)
+		pTile->updateTile(elapsedTime);
 }
 
 void TileLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets, const sf::Vector2i &mapSize)
@@ -28,9 +28,9 @@ void TileLayer::load(const Json::Value root, const std::string &layerGroup, cons
 			const GenericTileset *genericTileset = tilesets[getTilesetIndex(gid, tilesets)].get();
 			const TilebasedTileset &tileset = *(dynamic_cast<const TilebasedTileset*>(genericTileset));
 
-			TextureTile textureTile;
-			if (textureTile.load(gid, tileset, sf::Vector2i(x, y)))
-				m_tiles.push_back(std::move(textureTile));
+			std::unique_ptr<TextureTile> pTextureTile;
+			if (pTextureTile->load(gid, tileset, sf::Vector2i(x, y)))
+				m_tiles.push_back(std::move(pTextureTile));
 			else
 				if (count < 20)
 				{
@@ -48,6 +48,6 @@ void TileLayer::load(const Json::Value root, const std::string &layerGroup, cons
 
 void TileLayer::draw(sf::RenderTarget &target) const
 {
-	for (const auto &tile : m_tiles)
-		tile.draw(target);
+	for (const auto &pTile : m_tiles)
+		pTile->draw(target);
 }
