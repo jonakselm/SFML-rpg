@@ -53,10 +53,10 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 void Map::update(const sf::Time &elapsedTime)
 {
 	m_texture.clear();
-	for (auto &layer : m_layers)
+	for (auto &pLayer : m_layers)
 	{
-		layer->update(elapsedTime);
-		layer->draw(m_texture);
+		pLayer->update(elapsedTime);
+		pLayer->draw(m_texture);
 	}
 	m_texture.display();
 }

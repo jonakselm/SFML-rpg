@@ -24,13 +24,13 @@ void ObjectLayer::load(const Json::Value root, const std::string &layerGroup, co
 
 void ObjectLayer::update(const sf::Time &elapsedTime)
 {
-	for (auto &object : m_objects)
-		object->tile.updateObject(elapsedTime);
+	for (auto &pObject : m_objects)
+		pObject->tile.updateObject(elapsedTime);
 }
 
 void ObjectLayer::draw(sf::RenderTarget &target) const
 {
-	for (const auto &object : m_objects)
-		object->tile.draw(target);
+	for (const auto &pObject : m_objects)
+		pObject->tile.draw(target);
 }
 }
