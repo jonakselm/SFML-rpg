@@ -74,6 +74,7 @@ void Map::loadTileset(const Json::Value &root)
 {
 	for (const auto &val : root["tilesets"])
 	{
+		// Tilebased embedded
 		if (!val["image"].empty())
 		{
 			std::unique_ptr<TilebasedTileset> pTileset;
@@ -81,6 +82,7 @@ void Map::loadTileset(const Json::Value &root)
 
 			m_tilesets.push_back(std::move(pTileset));
 		}
+		// Non-embedded
 		else if (!val["source"].empty())
 		{
 			Json::Value newVal;
@@ -90,6 +92,7 @@ void Map::loadTileset(const Json::Value &root)
 
 			file >> newVal;
 
+			// Tilebased
 			if (newVal["grid"].empty())
 			{
 				std::unique_ptr<TilebasedTileset> pTileset;
@@ -98,6 +101,7 @@ void Map::loadTileset(const Json::Value &root)
 
 				m_tilesets.push_back(std::move(pTileset));
 			}
+			// Imagebased
 			else
 			{
 				std::unique_ptr<ImageTileset> pTileset;
@@ -107,6 +111,7 @@ void Map::loadTileset(const Json::Value &root)
 				m_tilesets.push_back(std::move(pTileset));
 			}
 		}
+		// Imagebased embedded
 		else if (!val["grid"].empty())
 		{
 			std::unique_ptr<ImageTileset> pTileset;
