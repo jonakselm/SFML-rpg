@@ -1,0 +1,18 @@
+{ "object":
+    {
+     "gid":6,
+     "height":450,
+     "id":38,
+     "name":"",
+     "rotation":0,
+     "type":"",
+     "visible":true,
+     "width":400
+    },
+ "tileset":
+    {
+     "firstgid":1,
+     "source":"..\/noge.json"
+    },
+ "type":"template"
+}

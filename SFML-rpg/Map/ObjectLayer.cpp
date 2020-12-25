@@ -1,36 +1,44 @@
 #include "stdafx.h"
 #include "ObjectLayer.hpp"
 
-void ObjectLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets, const sf::Vector2i &mapSize)
+void ObjectLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets, const LayerDetails &mapDetails)
 {
-	Layer::load(root, layerGroup);
+	Layer::load(root, layerGroup, mapDetails);
 
 	for (unsigned int i = 0; i < root["objects"].size(); i++)
 	{
 		Json::Value val = root["objects"][i];
-		std::unique_ptr<Object> pObject;
-		pObject->id = val["id"].asInt();
-		pObject->pos = { val["x"].asFloat(), val["y"].asFloat() };
-		TileTemplate &tTemplate = pObject->tileTemplate;
-		tTemplate.load(val, tilesets);
+		ObjectTile objTile;
+		if (val["template"].empty())
+		{
+			Object object;
+			object.load(val, tilesets);
+			objTile.object.emplace<Object>(object);
+		}
+		else
+		{
+			TemplateObject object;
+			object.load(val, tilesets);
+			objTile.object.emplace<TemplateObject>(object);
+		}
 
-		sf::FloatRect rect = { pObject->pos, tTemplate.templateSize };
-		bool isTemplate = tTemplate.type == "template";
-		pObject->tile.load(tTemplate, rect, isTemplate);
+		if (std::holds_alternative<TemplateObject>(objTile.object))
+			objTile.tile.load(std::get<TemplateObject>(objTile.object), properties.opacity);
+		else
+			objTile.tile.load(std::get<Object>(objTile.object), properties.opacity);
 
-		m_objects.push_back(std::move(pObject));
+		m_objects.push_back(std::move(objTile));
 	}
 }
 
 void ObjectLayer::update(const sf::Time &elapsedTime)
 {
-	for (auto &pObject : m_objects)
-		pObject->tile.updateObject(elapsedTime);
+	for (auto &object : m_objects)
+		object.tile.updateObject(elapsedTime);
 }
 
 void ObjectLayer::draw(sf::RenderTarget &target) const
 {
-	for (const auto &pObject : m_objects)
-		pObject->tile.draw(target);
-}
+	for (auto &object : m_objects)
+		object.tile.draw(target);
 }

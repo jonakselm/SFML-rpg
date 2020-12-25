@@ -16,6 +16,9 @@
     <Filter Include="Map">
       <UniqueIdentifier>{47f75a03-d43f-4bb6-aaf2-b411b8abe8e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{42ef0188-eb32-4c45-aabf-a6052fd2fcdc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,6 +45,12 @@
     <ClCompile Include="Map\ObjectLayer.cpp">
       <Filter>Map</Filter>
     </ClCompile>
+    <ClCompile Include="Entity\Entity.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity\Player.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -63,6 +72,15 @@
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Map\ObjectLayer.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\Entity.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity\Player.hpp">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\MapUtility.hpp">
       <Filter>Map</Filter>
     </ClInclude>
   </ItemGroup>

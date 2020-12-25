@@ -1,27 +1,21 @@
 #pragma once
+#include "MapUtility.hpp"
 
-class Animation
+struct TileProperties
 {
-public:
-	__int64 duration;
-	int tileId;
+	unsigned int id = 0;
+	Animation animation;
+	LayerProperties layerProps;
+	std::vector<ObjectProperties> collisionObjects;
 };
 
-class AnimatedTile
+struct ImageTile
 {
-public:
-	std::vector<Animation> animation;
-	unsigned int id;
-};
-
-class ImageTile
-{
-public:
 	void load(const Json::Value &root);
 
 	std::string path;
 	sf::Texture texture;
-	unsigned int id;
+	unsigned int id = 0;
 	sf::Vector2f imageSize;
 };
 
@@ -31,18 +25,19 @@ public:
 	GenericTileset() = default;
 	virtual ~GenericTileset() = default;
 
-	GenericTileset(const GenericTileset &) = delete;
+	// Messing with my use of std::variant, might uncomment when i find another solution
+	/*GenericTileset(const GenericTileset &) = delete;
 	GenericTileset(GenericTileset &) = delete;
 	GenericTileset &operator=(const GenericTileset &) = delete;
-	GenericTileset &operator=(GenericTileset &) = delete;
+	GenericTileset &operator=(GenericTileset &) = delete;*/
 
 	virtual void load(const Json::Value &root) = 0;
 
 	std::string name;
-	std::vector<AnimatedTile> animatedTiles;
-	int firstgid;
-	int tileCount;
-	int margin, spacing;
+	std::vector<TileProperties> tileProperties;
+	int firstgid = 0;
+	int tileCount = 0;
+	int margin = 0, spacing = 0;
 	sf::Vector2f tileSize;
 };
 
@@ -71,20 +66,33 @@ public:
 	std::vector<ImageTile> imageTiles;
 };
 
-class TileTemplate
+class Object
 {
 public:
-	TileTemplate() = default;
-	~TileTemplate();
+	Object() = default;
+	~Object() = default;
+	virtual void load(const Json::Value &root, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets);
 
-	void load(const Json::Value &root, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets);
+protected:
+	// Doesn't load tilesets. Made for TemplateObject, since it has
+	// easier tileset deduction.
+	virtual void load(const Json::Value &root);
+public:
+	ObjectProperties objProps;
+	int gid = 0;
+	const std::variant<const TilebasedTileset, const ImageTileset> *pTileset = nullptr;
+	bool tilebased = false;
+};
 
-	int gid;
-	std::string name;
-	std::string templateSource;
-	sf::Vector2f templateSize;
-	float rotation;
+class TemplateObject : public Object
+{
+public:
+	TemplateObject() = default;
+	~TemplateObject() = default;
+	void load(const Json::Value &root, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets) override;
+
+	int id = 0;
+	std::string templatePath;
+	std::string tilesetPath;
 	std::string type;
-	bool visible;
-	const ImageTileset *pTileset = nullptr;
 };

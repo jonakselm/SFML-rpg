@@ -4,13 +4,13 @@
 
 void TileLayer::update(const sf::Time &elapsedTime)
 {
-	for (auto &pTile : m_tiles)
-		pTile->updateTile(elapsedTime);
+	for (auto &tile : m_tiles)
+		tile.updateTile(elapsedTime);
 }
 
-void TileLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets, const sf::Vector2i &mapSize)
+void TileLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets, const LayerDetails &mapDetails)
 {
-	Layer::load(root, layerGroup);
+	Layer::load(root, layerGroup, mapDetails);
 	data.reserve(root["data"].size());
 	for (unsigned int i = 0; i < root["data"].size(); i++)
 	{
@@ -18,19 +18,21 @@ void TileLayer::load(const Json::Value root, const std::string &layerGroup, cons
 	}
 
 	int count = 0;
+	LayerDetails layerDetails = properties.layerDetails;
 
-	for (int y = 0; y < mapSize.y; y++)
+	for (int y = 0; y < layerDetails.height; y++)
 	{
-		for (int x = 0; x < mapSize.x; x++)
+		for (int x = 0; x < layerDetails.width; x++)
 		{
-			int gid = data[x + y * mapSize.x];
+			int gid = data[size_t(x) + size_t(y) * size_t(layerDetails.width)];
 
-			const GenericTileset *genericTileset = tilesets[getTilesetIndex(gid, tilesets)].get();
-			const TilebasedTileset &tileset = *(dynamic_cast<const TilebasedTileset*>(genericTileset));
+			const std::variant<const TilebasedTileset, const ImageTileset> &tileset = tilesets[getTilesetIndex(gid, tilesets)];
 
-			std::unique_ptr<TextureTile> pTextureTile;
-			if (pTextureTile->load(gid, tileset, sf::Vector2i(x, y)))
-				m_tiles.push_back(std::move(pTextureTile));
+			TextureTile textureTile;
+			if (textureTile.load(gid, tileset, sf::Vector2i(x, y), properties.opacity))
+			{
+				m_tiles.push_back(textureTile);
+			}
 			else
 				if (count < 20)
 				{
@@ -48,6 +50,8 @@ void TileLayer::load(const Json::Value root, const std::string &layerGroup, cons
 
 void TileLayer::draw(sf::RenderTarget &target) const
 {
-	for (const auto &pTile : m_tiles)
-		pTile->draw(target);
+	for (auto &tile : m_tiles)
+	{
+		tile.draw(target);
+	}
 }

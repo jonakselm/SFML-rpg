@@ -13,22 +13,35 @@ void GenericTileset::load(const Json::Value &root)
 
 	name = root["name"].asString();
 
-	tileSize = sf::Vector2f(root["tilewidth"].asInt(), root["tileheight"].asInt());
+	tileSize = sf::Vector2f(root["tilewidth"].asFloat(), root["tileheight"].asFloat());
 
 	for (unsigned int i = 0; i < root["tiles"].size(); i++)
 	{
 		Json::Value tiles = root["tiles"][i];
 
-		AnimatedTile aniTile;
-		aniTile.id = tiles["id"].asInt();
-		Json::Value aniVal = tiles["animation"];
-		if (!aniVal.empty())
+		bool hasProps = false;
+		TileProperties tileProps;
+		tileProps.id = tiles["id"].asInt();
+		Json::Value animationVal = tiles["animation"];
+		Json::Value objectgroupVal = tiles["objectgroup"];
+		if (!animationVal.empty())
 		{
-			for (unsigned int j = 0; j < aniVal.size(); j++)
+			for (unsigned int j = 0; j < animationVal.size(); j++)
 			{
-				aniTile.animation.push_back({ aniVal[j]["duration"].asInt64(), aniVal[j]["tileid"].asInt() });
+				tileProps.animation.frames.push_back({ animationVal[j]["duration"].asInt64(), animationVal[j]["tileid"].asInt() });
 			}
-			animatedTiles.push_back(aniTile);
+			tileProperties.push_back(tileProps);
+		}
+		if (!objectgroupVal.empty())
+		{
+			tileProps.layerProps.load(objectgroupVal);
+
+			for (const auto &objectVal : objectgroupVal["objects"])
+			{
+				ObjectProperties object;
+				object.load(objectVal);
+				tileProps.collisionObjects.push_back(object);
+			}
 		}
 	}
 }
@@ -43,9 +56,9 @@ void TilebasedTileset::load(const Json::Value &root)
 
 	if (!texture.loadFromFile(imageSource))
 	{
-		std::cout << std::endl << "---------------------------------------" << std::endl;
-		std::cout << "   Encountered error loading texture   " << std::endl;
-		std::cout << "---------------------------------------" << std::endl;
+		std::cout << std::endl << "------------------------------------------------" << std::endl;
+		std::cout << "   Encountered error loading TilebasedTileset   " << std::endl;
+		std::cout << "------------------------------------------------" << std::endl;
 		exit(-1);
 	}
 }
@@ -67,65 +80,6 @@ void ImageTileset::load(const Json::Value &root)
 	}
 }
 
-TileTemplate::~TileTemplate()
-{
-	pTileset = nullptr;
-}
-
-void TileTemplate::load(const Json::Value &root, const std::vector<std::unique_ptr<const GenericTileset>> &tilesets)
-{
-	Json::Value templateRoot;
-	if (!root["template"].empty())
-	{
-		templateSource = "data/maps/" + root["template"].asString();
-
-		std::ifstream file(templateSource);
-
-		file >> templateRoot;
-	}
-	else
-		templateRoot = root;
-
-	type = templateRoot["type"].asString();
-	Json::Value object;
-	if (type == "template")
-		object = templateRoot["object"];
-	else
-		object = templateRoot;
-
-	gid = object["gid"].asInt();
-	name = object["gid"].asString();
-	templateSize = sf::Vector2f(object["width"].asFloat(), object["height"].asFloat());
-	rotation = object["rotation"].asFloat();
-	visible = object["visible"].asBool();
-	for (const auto &tileset : tilesets)
-	{
-		if (!dynamic_cast<const ImageTileset *>(tileset.get()))
-			continue;
-		std::string path;
-		Json::Value tilesetRoot;
-		if (!root["template"].empty())
-		{
-			path = templateSource + "/../" + templateRoot["tileset"]["source"].asString();
-			std::ifstream file(path);
-			file >> tilesetRoot;
-		}
-		else
-		{
-			tilesetRoot = root;
-		}
-
-		if (tileset->name == tilesetRoot["name"].asString())
-		{
-			pTileset = dynamic_cast<const ImageTileset *>(tileset.get());
-		}
-		else if (gid >= tileset->firstgid && gid <= tileset->firstgid + tileset->tileCount)
-		{
-			pTileset = dynamic_cast<const ImageTileset *>(tileset.get());
-		}
-	}
-}
-
 void ImageTile::load(const Json::Value &root)
 {
 	id = root["id"].asInt();
@@ -134,8 +88,109 @@ void ImageTile::load(const Json::Value &root)
 	if (!texture.loadFromFile(path))
 	{
 		std::cout << std::endl << "---------------------------------------" << std::endl;
-		std::cout << "   Encountered error loading texture   " << std::endl;
+		std::cout << "   Encountered error loading ImageTile   " << std::endl;
 		std::cout << "---------------------------------------" << std::endl;
 		exit(-1);
 	}
+}
+
+void Object::load(const Json::Value &root)
+{
+	objProps.load(root);
+	gid = root["gid"].asInt();
+}
+
+void Object::load(const Json::Value &root, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets)
+{
+	// Find tileset based on gid (non template)
+	// (Not a template and therefore currently using local directory)
+	// "gid":468,|
+	// "height" : 512,|
+	// "id" : 15,|
+	// "name" : "",|
+	// "rotation" : 340.298007704893,|
+	// "type" : "",|
+	// "visible" : true,|
+	// "width" : 512,|
+	// "x" : 182.291308135998,|
+	// "y" : 778.31822537361|
+	///////////////////////////////////
+	load(root);
+
+	// Have to deduce tileset as it doesn't have the path stored
+	for (const auto &variantTileset : tilesets)
+	{
+		const GenericTileset *tileset = nullptr;
+		if (std::holds_alternative<const TilebasedTileset>(variantTileset))
+		{
+			tileset = &std::get<const TilebasedTileset>(variantTileset);
+			tilebased = true;
+		}
+		else
+		{
+			tileset = &std::get<const ImageTileset>(variantTileset);
+			tilebased = false;
+		}
+
+		if (gid >= tileset->firstgid && gid < tileset->firstgid + tileset->tileCount)
+		{
+			pTileset = &variantTileset;
+			break;
+		}
+	}
+}
+
+void TemplateObject::load(const Json::Value &root, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets)
+{
+	// No need to deduce tileset as its relative path is under the template's category->[tileset]
+
+	templatePath = "data/maps/" + root["template"].asString();
+	// Contains object info, tileset info and template type
+	Json::Value templateVal;
+	std::ifstream templateFile(templatePath);
+	templateFile >> templateVal;
+
+	// Set x and y, as they are found in the objectlayer's objectlist
+	objProps.rect = sf::FloatRect(root["x"].asFloat(), root["y"].asFloat(),
+		objProps.rect.width, objProps.rect.height);
+	id = root["id"].asInt();
+	type = templateVal["type"].asString();
+	const Json::Value objectVal = templateVal["object"];
+	Object::load(objectVal);
+
+	///////////////////////////////////////////////////////////////////////
+	// Getting tileset
+
+	// Contains tileset's source and firstgid
+	const Json::Value tilesetInfoVal = templateVal["tileset"];
+	// Contains info stored in the actual tileset (image source, etc.)
+	Json::Value tilesetVal;
+	// Getting the source for the tileset
+	tilesetPath = templatePath + "/../" + tilesetInfoVal["source"].asString();
+	std::ifstream tilesetFile(tilesetPath);
+	tilesetFile >> tilesetVal;
+
+	for (const auto &variantTileset : tilesets)
+	{
+		const GenericTileset *tileset = nullptr;
+		if (std::holds_alternative<const TilebasedTileset>(variantTileset))
+		{
+			tileset = &std::get<const TilebasedTileset>(variantTileset);
+			tilebased = true;
+		}
+		else
+		{
+			tileset = &std::get<const ImageTileset>(variantTileset);
+			tilebased = false;
+		}
+
+		if (tileset->name == tilesetVal["name"].asString())
+		{
+			pTileset = &variantTileset;
+			break;
+		}
+	}
+
+	// End of getting tileset
+	///////////////////////////////////////////////////////////////////////
 }

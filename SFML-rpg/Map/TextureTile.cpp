@@ -7,35 +7,37 @@ TextureTile::TextureTile()
 
 TextureTile::~TextureTile()
 {
-	m_pTileset = nullptr;
+	m_tileset = nullptr;
 }
 
 bool TextureTile::updateTile(const sf::Time &elapsedTime)
 {
-	m_timer += elapsedTime;
 	if (m_animated)
 	{
-		if (m_timer.asMilliseconds() > m_aniTile.animation[m_aniCount].duration)
+		m_timer += elapsedTime;
+		if (m_timer.asMilliseconds() > m_animation->frames[m_animationCount].duration)
 		{
-			m_aniCount++;
-			if (m_aniCount >= m_aniTile.animation.size())
-				m_aniCount = 0;
+			m_animationCount++;
+			if (m_animationCount >= m_animation->frames.size())
+				m_animationCount = 0;
 
 			m_timer = sf::Time::Zero;
 		}
 
-		int localTileId = m_aniTile.animation[m_aniCount].tileId;
+		int localTileId = m_animation->frames[m_animationCount].tileId;
 
-		const TilebasedTileset *pTileset = dynamic_cast<const TilebasedTileset *>(m_pTileset);
+		const TilebasedTileset *pTileset = nullptr;
+		if (std::holds_alternative<const TilebasedTileset>(*m_tileset))
+			pTileset = &std::get<const TilebasedTileset>(*m_tileset);
 
-		sf::FloatRect textureRect = getTextureRect(localTileId, (*m_pTileset), pTileset->tileSize);
+		sf::IntRect textureRect = getTextureRect(localTileId, *pTileset, pTileset->tileSize);
 		int textureRight = textureRect.left + textureRect.width,
 			textureBottom = textureRect.top + textureRect.height;
 
-		m_vertices[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
-		m_vertices[1].texCoords = sf::Vector2f(textureRight, textureRect.top);
-		m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
-		m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
+		m_vertices[0].texCoords = sf::Vector2f(float(textureRect.left), float(textureRect.top));
+		m_vertices[1].texCoords = sf::Vector2f(float(textureRight), float(textureRect.top));
+		m_vertices[2].texCoords = sf::Vector2f(float(textureRight), float(textureBottom));
+		m_vertices[3].texCoords = sf::Vector2f(float(textureRect.left), float(textureBottom));
 
 		return true;
 	}
@@ -44,99 +46,161 @@ bool TextureTile::updateTile(const sf::Time &elapsedTime)
 
 bool TextureTile::updateObject(const sf::Time &elapsedTime)
 {
-	//m_transformable.rotate(1);
-	//m_states.transform = m_transformable.getTransform();
-	m_timer += elapsedTime;
 	if (m_animated)
 	{
-		if (m_timer.asMilliseconds() > m_aniTile.animation[m_aniCount].duration)
+		m_timer += elapsedTime;
+		if (m_timer.asMilliseconds() > m_animation->frames[m_animationCount].duration)
 		{
-			m_aniCount++;
-			if (m_aniCount >= m_aniTile.animation.size())
-				m_aniCount = 0;
+			m_animationCount++;
+			if (m_animationCount >= m_animation->frames.size())
+				m_animationCount = 0;
 
 			m_timer = sf::Time::Zero;
 		}
 
-		int localTileId = m_aniTile.animation[m_aniCount].tileId;
+		int localTileId = m_animation->frames[m_animationCount].tileId;
 
-		const ImageTileset *pTileset = dynamic_cast<const ImageTileset *>(m_pTileset);
+		const ImageTileset *pTileset = nullptr;
+		if (std::holds_alternative<const ImageTileset>(*m_tileset))
+			pTileset = &std::get<const ImageTileset>(*m_tileset);
 
 		const ImageTile &imageTile = pTileset->imageTiles[localTileId];
 
-		m_states.texture = &imageTile.texture;
+		m_renderStates.texture = &imageTile.texture;
 
-		sf::FloatRect textureRect = getTextureRect(localTileId, (*m_pTileset), imageTile.imageSize);
+		sf::IntRect textureRect = getTextureRect(localTileId, *pTileset, imageTile.imageSize);
 		int textureRight = textureRect.left + textureRect.width,
 			textureBottom = textureRect.top + textureRect.height;
 
-		m_vertices[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
-		m_vertices[1].texCoords = sf::Vector2f(textureRight, textureRect.top);
-		m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
-		m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
+		m_vertices[0].texCoords = sf::Vector2f(float(textureRect.left), float(textureRect.top));
+		m_vertices[1].texCoords = sf::Vector2f(float(textureRight), float(textureRect.top));
+		m_vertices[2].texCoords = sf::Vector2f(float(textureRight), float(textureBottom));
+		m_vertices[3].texCoords = sf::Vector2f(float(textureRect.left), float(textureBottom));
 
 		return true;
 	}
 	return false;
 }
 
-bool TextureTile::load(int gid, const TilebasedTileset &tileset, const sf::Vector2i &gridPos)
+bool TextureTile::loadWithMapCoords(int gid, const std::variant<const TilebasedTileset, const ImageTileset> &tileset, const sf::FloatRect &worldRect, float opacity)
 {
-	m_localTileId = gid - tileset.firstgid;
+	const GenericTileset *genericTileset = nullptr;
+	if (std::holds_alternative<const TilebasedTileset>(tileset))
+		genericTileset = &std::get<const TilebasedTileset>(tileset);
+	else
+		genericTileset = &std::get<const ImageTileset>(tileset);
 
-	m_states.texture = &tileset.texture;
+	m_localTileId = gid - genericTileset->firstgid;
 
-	// Using bottom left since tiled uses bottom left
-	int left = gridPos.x * tileset.tileSize.x, bottom = (gridPos.y + 1) * tileset.tileSize.x;
+	if (dynamic_cast<const TilebasedTileset *>(genericTileset))
+	{
+		const TilebasedTileset *pTileset = dynamic_cast<const TilebasedTileset *>(genericTileset);
+		m_renderStates.texture = &pTileset->texture;
+	}
+	else if (dynamic_cast<const ImageTileset *>(genericTileset))
+	{
+		const ImageTileset *pTileset = dynamic_cast<const ImageTileset *>(genericTileset);
+		m_renderStates.texture = &pTileset->imageTiles[m_localTileId].texture;
+	}
 
-	auto rect = sf::FloatRect(left, bottom, tileset.tileSize.x, tileset.tileSize.y);
-
-	if (genericLoad(gid, tileset, rect))
-		return true;
-
-	return false;
+	return genericLoad(gid, tileset, worldRect, opacity);
 }
 
-bool TextureTile::load(const TileTemplate &tTemplate, const sf::FloatRect &rect, bool isTemplate)
+bool TextureTile::load(int gid, const std::variant<const TilebasedTileset, const ImageTileset> &tileset, const sf::Vector2i &gridPos, float opacity)
 {
-	m_localTileId = tTemplate.gid;
-	if (isTemplate)
-		m_localTileId--;
+	const GenericTileset *genericTileset = nullptr;
+	if (std::holds_alternative<const TilebasedTileset>(tileset))
+		genericTileset = &std::get<const TilebasedTileset>(tileset);
+	else
+		genericTileset = &std::get<const ImageTileset>(tileset);
 
-	const int gid = tTemplate.gid;
-	const ImageTileset &tileset = *tTemplate.pTileset;
+	int left = gridPos.x * int(genericTileset->tileSize.x),
+		bottom = (gridPos.y + 1) * int(genericTileset->tileSize.x);
 
-	if (gid >= tileset.firstgid && gid <= tileset.firstgid + tileset.tileCount)
+	// Tiled uses bottom-left (not top-left)
+	const sf::FloatRect worldRect = { static_cast<float>(left), static_cast<float>(bottom),
+		genericTileset->tileSize.x, genericTileset->tileSize.y };
+
+	return loadWithMapCoords(gid, tileset, worldRect, opacity);
+}
+
+bool TextureTile::load(const Object &object, float opacity)
+{
+	m_transformable.setRotation(object.objProps.rotation);
+	// Need to make this in a way that it takes both image tilesets and tilebased tilesets
+	return loadWithMapCoords(object.gid, *object.pTileset, object.objProps.rect, opacity);
+}
+
+bool TextureTile::load(const TemplateObject &templateObject, float opacity)
+{
+	const int gid = templateObject.gid;
+
+	if (templateObject.tilebased)
 	{
-		m_localTileId -= tileset.firstgid;
-
-		m_states.texture = &tileset.imageTiles[m_localTileId].texture;
+		const TilebasedTileset &tileset = std::get<const TilebasedTileset>(*templateObject.pTileset);
+		m_renderStates.texture = &tileset.texture;
+		m_localTileId = gid - tileset.firstgid;
 	}
-	else if (gid < tileset.firstgid)
+	else
 	{
-		m_states.texture = &tileset.imageTiles[m_localTileId].texture;
+		// Tiled starts indexing from 1 instead of 0, correcting that
+		m_localTileId = templateObject.gid - 1;
+
+		const ImageTileset &tileset = std::get<const ImageTileset>(*templateObject.pTileset);
+
+		if (gid >= tileset.firstgid && gid <= tileset.firstgid + tileset.tileCount)
+		{
+			m_localTileId -= tileset.firstgid;
+
+			m_renderStates.texture = &tileset.imageTiles[m_localTileId].texture;
+		}
+		else if (gid < tileset.firstgid)
+		{
+			m_renderStates.texture = &tileset.imageTiles[m_localTileId].texture;
+		}
 	}
-	m_transformable.setRotation(tTemplate.rotation);
+	m_transformable.setRotation(templateObject.objProps.rotation);
 
-	if (genericLoad(gid, tileset, rect))
-		return true;
+	return genericLoad(gid, *templateObject.pTileset, templateObject.objProps.rect, opacity);
+}
 
-	return false;
+const sf::Vector2f &TextureTile::getPosition() const
+{
+	return m_transformable.getPosition();
+}
+
+const sf::Vector2f &TextureTile::getSize() const
+{
+	// Bottom-right side
+	return m_vertices[2].position;
+}
+
+const sf::FloatRect &TextureTile::getRect() const
+{
+	return sf::FloatRect(getPosition(), getSize());
 }
 
 void TextureTile::draw(sf::RenderTarget &target) const
 {
-	target.draw(m_vertices, EDGE_COUNT, sf::Quads, m_states);
+	target.draw(m_vertices, EDGE_COUNT, sf::Quads, m_renderStates);
 }
 
-bool TextureTile::genericLoad(int gid, const GenericTileset &tileset, const sf::FloatRect &rect)
+bool TextureTile::genericLoad(int gid, const std::variant<const TilebasedTileset, const ImageTileset> &tileset, const sf::FloatRect &rect, float opacity)
 {
 	if (gid <= 0)
 		return false;
 
-	m_pTileset = &tileset;
+	for (int i = 0; i < 4; i++)
+		m_vertices[i].color = sf::Color(255, 255, 255, sf::Uint8((256 * opacity) - 1));
+	int i = 0;
 
-	float right = rect.width, bottom = rect.height * 2;
+	m_tileset = &tileset;
+
+	const GenericTileset *genericTileset = nullptr;
+	if (std::holds_alternative<const TilebasedTileset>(tileset))
+		genericTileset = &std::get<const TilebasedTileset>(tileset);
+	else
+		genericTileset = &std::get<const ImageTileset>(tileset);
 
 	// Tiled starts from bottom left (setting the origin to bottom left)
 	m_transformable.setOrigin(0, rect.height);
@@ -150,44 +214,46 @@ bool TextureTile::genericLoad(int gid, const GenericTileset &tileset, const sf::
 
 	sf::Vector2f tileSize;
 
-	if (dynamic_cast<const TilebasedTileset *>(&tileset))
+	if (dynamic_cast<const TilebasedTileset *>(genericTileset))
 	{
-		const TilebasedTileset *pTileset = dynamic_cast<const TilebasedTileset *>(&tileset);
+		const TilebasedTileset *pTileset = dynamic_cast<const TilebasedTileset *>(genericTileset);
 		tileSize = pTileset->tileSize;
 	}
-	else if (dynamic_cast<const ImageTileset *>(&tileset))
+	else if (dynamic_cast<const ImageTileset *>(genericTileset))
 	{
-		const ImageTileset *pTileset = dynamic_cast<const ImageTileset *>(&tileset);
+		const ImageTileset *pTileset = dynamic_cast<const ImageTileset *>(genericTileset);
 		tileSize = pTileset->imageTiles[m_localTileId].imageSize;
 	}
 
-	sf::FloatRect textureRect = getTextureRect(m_localTileId, tileset, tileSize);
+	sf::IntRect textureRect = getTextureRect(m_localTileId, *genericTileset, tileSize);
 	int textureRight = textureRect.left + textureRect.width,
 		textureBottom = textureRect.top + textureRect.height;
 
-	m_vertices[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
-	m_vertices[1].texCoords = sf::Vector2f(textureRight, textureRect.top);
-	m_vertices[2].texCoords = sf::Vector2f(textureRight, textureBottom);
-	m_vertices[3].texCoords = sf::Vector2f(textureRect.left, textureBottom);
+	m_vertices[0].texCoords = sf::Vector2f(float(textureRect.left), float(textureRect.top));
+	m_vertices[1].texCoords = sf::Vector2f(float(textureRight),	float(textureRect.top));
+	m_vertices[2].texCoords = sf::Vector2f(float(textureRight),	float(textureBottom));
+	m_vertices[3].texCoords = sf::Vector2f(float(textureRect.left), float(textureBottom));
 
-	for (const auto &aniTile : tileset.animatedTiles)
+	for (const auto &tileProps : genericTileset->tileProperties)
 	{
-		if (m_localTileId == aniTile.id)
+		if (tileProps.id == m_localTileId)
 		{
-			m_animated = true;
-			m_aniTile = aniTile;
-
-			m_localTileId = m_aniTile.animation[m_aniCount].tileId;
+			if (tileProps.animation.frames.size() >= 1)
+			{
+				m_animated = true;
+				m_localTileId = tileProps.animation.frames[m_animationCount].tileId;
+			}
+			m_animation = &tileProps.animation;
 			break;
 		}
 	}
 
-	m_states.transform = m_transformable.getTransform();
+	m_renderStates.transform = m_transformable.getTransform();
 
 	return true;
 }
 
-sf::FloatRect TextureTile::getTextureRect(int localTileId, const GenericTileset &tileset, const sf::Vector2f &tileSize) const
+sf::IntRect TextureTile::getTextureRect(int localTileId, const GenericTileset &tileset, const sf::Vector2f &tileSize) const
 {
 	int x = 0, y = 0;
 	if (dynamic_cast<const TilebasedTileset*>(&tileset))
@@ -197,5 +263,5 @@ sf::FloatRect TextureTile::getTextureRect(int localTileId, const GenericTileset 
 		y = localTileId / tTileset.columns;
 	}
 
-	return sf::FloatRect(x * tileSize.x, y * tileSize.y, tileSize.x, tileSize.y);
+	return sf::IntRect(int(x * tileSize.x), int(y * tileSize.y), int(tileSize.x), int(tileSize.y));
 }

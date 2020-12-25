@@ -11,3 +11,5 @@
 #include <SFML/Window.hpp>
 
 #include <fstream>
+#include <variant>
+#include <cassert>

@@ -1,0 +1,18 @@
+{ "object":
+    {
+     "gid":253,
+     "height":32,
+     "id":39,
+     "name":"",
+     "rotation":105.098566909117,
+     "type":"",
+     "visible":true,
+     "width":32
+    },
+ "tileset":
+    {
+     "firstgid":1,
+     "source":"..\/mountain_landscape.json"
+    },
+ "type":"template"
+}

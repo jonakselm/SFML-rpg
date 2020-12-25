@@ -1,4 +1,12 @@
 { "columns":16,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
  "image":"mountain_landscape.png",
  "imageheight":512,
  "imagewidth":512,
@@ -6,20 +14,51 @@
  "name":"mountain_landscape",
  "spacing":0,
  "tilecount":256,
- "tiledversion":"1.4.2",
+ "tiledversion":"1.4.3",
  "tileheight":32,
  "tiles":[
         {
-         "animation":[
-                {
-                 "duration":150,
-                 "tileid":237
-                }, 
-                {
-                 "duration":150,
-                 "tileid":253
-                }],
-         "id":237
+         "id":16,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":4,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":9,
+                             "y":-20
+                            }, 
+                            {
+                             "x":20,
+                             "y":-24
+                            }, 
+                            {
+                             "x":21,
+                             "y":2
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":15,
+                     "y":38
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            }
         }],
  "tilewidth":32,
  "type":"tileset",

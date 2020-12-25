@@ -5,6 +5,7 @@
 #include <vector>
 #include "TextureTile.hpp"
 #include "ObjectLayer.hpp"
+#include "Entity/Player.hpp"
 
 class Map
 {
@@ -19,6 +20,8 @@ public:
 
 	void update(const sf::Time &elapsedTime);
 
+	void addPlayer(const Player *pPlayer);
+
 	void draw(sf::RenderTarget &target) const;
 
 private:
@@ -28,12 +31,15 @@ private:
 private:
 	sf::Clock m_clock;
 	sf::Time m_time;
-	std::vector<std::unique_ptr<const GenericTileset>> m_tilesets;
-	std::vector<std::unique_ptr<Layer>> m_layers;
-	sf::Vector2i m_mapSize, m_tileSize;
+	std::vector<std::variant<const TilebasedTileset, const ImageTileset>> m_tilesets;
+	std::vector<std::variant<TileLayer, ObjectLayer>> m_layers;
+	LayerDetails m_mapDetails;
 	// Sprites have the size of the initial texture
-	sf::Sprite m_sprite;
+	// Sprites are small and efficient objects
+	sf::Sprite m_mapSprite, m_minimapSprite;
 	sf::Font m_font;
+	// Textures in general are big and inefficient objects since they store images
 	sf::RenderTexture m_texture;
 	sf::View m_gameView, m_minimapView;
+	const Player *m_pPlayer = nullptr;
 };
