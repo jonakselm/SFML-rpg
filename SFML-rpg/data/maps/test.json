@@ -618,7 +618,7 @@
         {
          "columns":16,
          "firstgid":129,
-         "image":"..\/..\/..\/..\/RPG-Game\/SFML-game\/data\/Tilesets\/cave.png",
+         "image":"..\/tilesets\/cave.png",
          "imageheight":672,
          "imagewidth":512,
          "margin":0,
