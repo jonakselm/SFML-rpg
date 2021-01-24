@@ -1,0 +1,27 @@
+{
+    "activeFile": "C:/Users/jonak/source/repos/Pokemon Darkness Fall/Graphics/Male Player Sprite/animation_test.tsx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "C:/Users/jonak/source/repos/Pokemon Darkness Fall/Graphics/Male Player Sprite/animation_test.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "frame.defaultDuration": 150,
+    "openFiles": [
+        "C:/Users/jonak/source/repos/Pokemon Darkness Fall/Graphics/Male Player Sprite/animation_test.tsx"
+    ],
+    "project": "",
+    "recentFiles": [
+        "C:/Users/jonak/source/repos/Pokemon Darkness Fall/Graphics/Male Player Sprite/animation_test.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    },
+    "tileset.transparentColor": "#847ba5",
+    "tileset.useTransparentColor": true
+}

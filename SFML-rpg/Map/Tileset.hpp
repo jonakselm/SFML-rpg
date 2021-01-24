@@ -96,3 +96,6 @@ public:
 	std::string tilesetPath;
 	std::string type;
 };
+
+// Returns 0 if an invalid gid value is entered
+unsigned int getTilesetIndex(int gid, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets);

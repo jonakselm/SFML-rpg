@@ -13,16 +13,14 @@ public:
 	Layer &operator=(const Layer &) = delete;
 	Layer &operator=(Layer &) = delete;*/
 
+	virtual void update(const sf::Time &elapsedTime) = 0;
+
 	virtual void load(const Json::Value &root, const std::string &group, const LayerDetails &mapDetails);
 
 	virtual void draw(sf::RenderTarget &target) const = 0;
-
-	virtual void update(const sf::Time &elapsedTime) = 0;
 
 	LayerProperties properties;
 	std::string group;
 
 protected:
-	// Returns 0 if an invalid gid value is entered
-	unsigned int getTilesetIndex(int gid, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets) const;
 };

@@ -50,6 +50,10 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 
 	std::cout << "Loading layers: " << m_time.asSeconds() << "s" << std::endl;
 
+	loadChunks();
+	for (auto &chunk : m_chunks)
+		chunk.drawToTexture();
+
 	return true;
 }
 
@@ -65,7 +69,12 @@ void Map::update(const sf::Time &elapsedTime)
 		m_gameView.move({ 1, 0 });
 
 	m_texture.clear();
-	for (int i = 0; i < m_layers.size(); i++)
+	for (auto &chunk : m_chunks)
+	{
+		chunk.update(elapsedTime);
+		chunk.drawToTarget(m_texture);
+	}
+	/*for (int i = 0; i < m_layers.size(); i++)
 	{
 		Layer *layer = nullptr;
 		if (std::holds_alternative<TileLayer>(m_layers[i]))
@@ -79,13 +88,13 @@ void Map::update(const sf::Time &elapsedTime)
 			if (m_pPlayer != nullptr)
 				m_pPlayer->draw(m_texture);
 		}
-	}
+	}*/
 	m_texture.display();
 }
 
 void Map::addPlayer(const Player *pPlayer)
 {
-	m_pPlayer = pPlayer;
+	m_player = pPlayer;
 }
 
 void Map::draw(sf::RenderTarget &target) const
@@ -163,6 +172,27 @@ void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 		else if (val["type"].asString() == "group")
 		{
 			loadLayer(val, val["name"].asString());
+		}
+	}
+}
+
+void Map::loadChunks()
+{
+	sf::Vector2i chunkBounds = { int(std::ceil(float(m_mapDetails.width) / m_chunkSize.x)), int(std::ceil(float(m_mapDetails.height) / m_chunkSize.y)) };
+
+	m_chunks.setSize(chunkBounds.x * chunkBounds.y);
+
+	for (int i = 0; i < m_chunks.size(); i++)
+	{
+		sf::Vector2i chunkGridPos = { i % chunkBounds.x * m_chunkSize.x, i / chunkBounds.x * m_chunkSize .y };
+		auto &chunk = m_chunks[i];
+		chunk.setProperties(m_mapDetails.tileSize, m_chunkSize);
+		chunk.setGridPos(chunkGridPos);
+		chunk.load();
+		for (auto &layer : m_layers)
+		{
+			if (const TileLayer *tileLayer = std::get_if<TileLayer>(&layer))
+				chunk.addTiles(*tileLayer, m_tilesets);
 		}
 	}
 }

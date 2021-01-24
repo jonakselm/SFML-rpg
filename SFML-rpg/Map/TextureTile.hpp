@@ -29,6 +29,8 @@ public:
 	const sf::Vector2f &getSize() const;
 	const sf::FloatRect &getRect() const;
 
+	bool isAnimated() const;
+
 	void draw(sf::RenderTarget &target) const;
 
 private:

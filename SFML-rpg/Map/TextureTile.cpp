@@ -22,24 +22,23 @@ bool TextureTile::updateTile(const sf::Time &elapsedTime)
 				m_animationCount = 0;
 
 			m_timer = sf::Time::Zero;
+			int localTileId = m_animation->frames[m_animationCount].tileId;
+
+			const TilebasedTileset *pTileset = nullptr;
+			if (std::holds_alternative<const TilebasedTileset>(*m_tileset))
+				pTileset = &std::get<const TilebasedTileset>(*m_tileset);
+
+			sf::IntRect textureRect = getTextureRect(localTileId, *pTileset, pTileset->tileSize);
+			int textureRight = textureRect.left + textureRect.width,
+				textureBottom = textureRect.top + textureRect.height;
+
+			m_vertices[0].texCoords = sf::Vector2f(float(textureRect.left), float(textureRect.top));
+			m_vertices[1].texCoords = sf::Vector2f(float(textureRight), float(textureRect.top));
+			m_vertices[2].texCoords = sf::Vector2f(float(textureRight), float(textureBottom));
+			m_vertices[3].texCoords = sf::Vector2f(float(textureRect.left), float(textureBottom));
+
+			return true;
 		}
-
-		int localTileId = m_animation->frames[m_animationCount].tileId;
-
-		const TilebasedTileset *pTileset = nullptr;
-		if (std::holds_alternative<const TilebasedTileset>(*m_tileset))
-			pTileset = &std::get<const TilebasedTileset>(*m_tileset);
-
-		sf::IntRect textureRect = getTextureRect(localTileId, *pTileset, pTileset->tileSize);
-		int textureRight = textureRect.left + textureRect.width,
-			textureBottom = textureRect.top + textureRect.height;
-
-		m_vertices[0].texCoords = sf::Vector2f(float(textureRect.left), float(textureRect.top));
-		m_vertices[1].texCoords = sf::Vector2f(float(textureRight), float(textureRect.top));
-		m_vertices[2].texCoords = sf::Vector2f(float(textureRight), float(textureBottom));
-		m_vertices[3].texCoords = sf::Vector2f(float(textureRect.left), float(textureBottom));
-
-		return true;
 	}
 	return false;
 }
@@ -178,6 +177,11 @@ const sf::Vector2f &TextureTile::getSize() const
 const sf::FloatRect &TextureTile::getRect() const
 {
 	return sf::FloatRect(getPosition(), getSize());
+}
+
+bool TextureTile::isAnimated() const
+{
+	return m_animated;
 }
 
 void TextureTile::draw(sf::RenderTarget &target) const

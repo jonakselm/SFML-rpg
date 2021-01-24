@@ -175,6 +175,7 @@
     <ClCompile Include="Map/Layer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map/Map.cpp" />
+    <ClCompile Include="Map\Chunk.cpp" />
     <ClCompile Include="Map\ObjectLayer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -191,12 +192,14 @@
     <ClInclude Include="Entity\Player.hpp" />
     <ClInclude Include="Map/Layer.hpp" />
     <ClInclude Include="Map/Map.hpp" />
+    <ClInclude Include="Map\Chunk.hpp" />
     <ClInclude Include="Map\MapUtility.hpp" />
     <ClInclude Include="Map\ObjectLayer.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Map/TileLayer.hpp" />
     <ClInclude Include="Map/Tileset.hpp" />
     <ClInclude Include="Map/TextureTile.hpp" />
+    <ClInclude Include="Utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

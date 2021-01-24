@@ -17,7 +17,7 @@ void TileLayer::load(const Json::Value root, const std::string &layerGroup, cons
 		data.push_back(root["data"][i].asInt());
 	}
 
-	int count = 0;
+	/*int count = 0;
 	LayerDetails layerDetails = properties.layerDetails;
 
 	for (int y = 0; y < layerDetails.height; y++)
@@ -45,7 +45,12 @@ void TileLayer::load(const Json::Value root, const std::string &layerGroup, cons
 					count++;
 				}
 		}
-	}
+	}*/
+}
+
+int TileLayer::getData(int x, int y) const
+{
+	return getData(sf::Vector2i(x, y));
 }
 
 void TileLayer::draw(sf::RenderTarget &target) const
@@ -54,4 +59,9 @@ void TileLayer::draw(sf::RenderTarget &target) const
 	{
 		tile.draw(target);
 	}
+}
+
+int TileLayer::getData(const sf::Vector2i &gridPos) const
+{
+	return data[size_t(gridPos.x) + size_t(gridPos.y) * size_t(properties.layerDetails.width)];
 }

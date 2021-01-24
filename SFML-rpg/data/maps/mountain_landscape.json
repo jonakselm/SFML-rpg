@@ -22,7 +22,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -59,6 +58,18 @@
              "x":0,
              "y":0
             }
+        }, 
+        {
+         "animation":[
+                {
+                 "duration":2000,
+                 "tileid":237
+                }, 
+                {
+                 "duration":2000,
+                 "tileid":253
+                }],
+         "id":237
         }],
  "tilewidth":32,
  "type":"tileset",

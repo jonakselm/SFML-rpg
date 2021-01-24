@@ -51,6 +51,9 @@
     <ClCompile Include="Entity\Player.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Map\Chunk.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -82,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="Map\MapUtility.hpp">
       <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\Chunk.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

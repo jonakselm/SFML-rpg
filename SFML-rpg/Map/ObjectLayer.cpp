@@ -1,6 +1,12 @@
 #include "stdafx.h"
 #include "ObjectLayer.hpp"
 
+void ObjectLayer::update(const sf::Time &elapsedTime)
+{
+	for (auto &object : m_objects)
+		object.tile.updateObject(elapsedTime);
+}
+
 void ObjectLayer::load(const Json::Value root, const std::string &layerGroup, const std::vector<std::variant<const TilebasedTileset, const ImageTileset>> &tilesets, const LayerDetails &mapDetails)
 {
 	Layer::load(root, layerGroup, mapDetails);
@@ -29,12 +35,6 @@ void ObjectLayer::load(const Json::Value root, const std::string &layerGroup, co
 
 		m_objects.push_back(std::move(objTile));
 	}
-}
-
-void ObjectLayer::update(const sf::Time &elapsedTime)
-{
-	for (auto &object : m_objects)
-		object.tile.updateObject(elapsedTime);
 }
 
 void ObjectLayer::draw(sf::RenderTarget &target) const
