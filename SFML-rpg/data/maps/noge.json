@@ -16,8 +16,8 @@
  "margin":0,
  "name":"noge",
  "spacing":0,
- "tilecount":6,
- "tiledversion":"1.4.2",
+ "tilecount":5,
+ "tiledversion":"1.4.3",
  "tileheight":512,
  "tiles":[
         {
@@ -96,12 +96,6 @@
          "image":"untitled3.png",
          "imageheight":64,
          "imagewidth":64
-        }, 
-        {
-         "id":5,
-         "image":"..\/..\/..\/..\/..\/..\/Pictures\/Sprite Inspiration\/rpgsprites1.zip_.preview.png",
-         "imageheight":450,
-         "imagewidth":400
         }],
  "tilewidth":512,
  "type":"tileset",

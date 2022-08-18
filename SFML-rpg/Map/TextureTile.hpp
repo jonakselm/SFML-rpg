@@ -1,52 +1,25 @@
 #pragma once
-#include "Tileset.hpp"
 
-class TextureTile
+class TextureTile : public sf::Drawable, public sf::Transformable
 {
 public:
 	TextureTile();
 	~TextureTile();
 
-	// Messing with std::variant
-	/*TextureTile(const TextureTile &) = delete;
-	TextureTile(TextureTile &) = delete;
-	TextureTile &operator=(const TextureTile &) = delete;
-	TextureTile &operator=(TextureTile &) = delete;*/
+	void update();
 
-	// Updates a tile if it is an animated tile
-	bool updateTile(const sf::Time &elapsedTime);
-	bool updateObject(const sf::Time &elapsedTime);
+	void setTexture(const sf::Texture &texture);
+	void setTextureRect(const sf::IntRect &textureRect);
 
-	// Returns true if the tileId is higher than 0 (which means nothing is in the tile)
-	// Remember tiled uses bottom-left (not the standard top-left)
-	bool loadWithMapCoords(int gid, const std::variant<const TilebasedTileset, const ImageTileset> &tileset, const sf::FloatRect &worldRect, float opacity);
-	bool load(int gid, const std::variant<const TilebasedTileset, const ImageTileset> &tileset, const sf::Vector2i &gridPos, float opacity);
-	
-	bool load(const Object &object, float opacity);
-	bool load(const TemplateObject &templateObject, float opacity);
-
-	const sf::Vector2f &getPosition() const;
-	const sf::Vector2f &getSize() const;
-	const sf::FloatRect &getRect() const;
-
-	bool isAnimated() const;
-
-	void draw(sf::RenderTarget &target) const;
+	const sf::Texture &getTexture() const;
+	sf::IntRect getTextureRect() const;
 
 private:
-	// Uses percentage values
-	bool genericLoad(int gid, const std::variant<const TilebasedTileset, const ImageTileset> &tileset, const sf::FloatRect &rect, float opacity = 1.f);
-	sf::IntRect getTextureRect(int localTileId, const GenericTileset &tileset, const sf::Vector2f &tileSize) const;
+	virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
 	static constexpr int EDGE_COUNT = 4;
-	sf::Vertex m_vertices[EDGE_COUNT];
-	const std::variant<const TilebasedTileset, const ImageTileset> *m_tileset = nullptr;
-	sf::RenderStates m_renderStates;
-	sf::Transformable m_transformable;
-	const Animation *m_animation = nullptr;
-	bool m_animated = false;
-	int m_animationCount = 0;
-	sf::Time m_timer;
-	int m_localTileId = 0;
+	std::array<sf::Vertex, EDGE_COUNT> m_vertices;
+	sf::VertexBuffer m_buffer;
+	const sf::Texture *m_texture = nullptr;
 };

@@ -172,33 +172,27 @@
   <ItemGroup>
     <ClCompile Include="Entity\Entity.cpp" />
     <ClCompile Include="Entity\Player.cpp" />
-    <ClCompile Include="Map/Layer.cpp" />
+    <ClCompile Include="HighAccuracyClock.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map/Map.cpp" />
-    <ClCompile Include="Map\Chunk.cpp" />
-    <ClCompile Include="Map\ObjectLayer.cpp" />
+    <ClCompile Include="Map\Layers\Layer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Map/TileLayer.cpp" />
-    <ClCompile Include="Map/Tileset.cpp" />
-    <ClCompile Include="Map/TextureTile.cpp" />
+    <ClCompile Include="Map\TextureTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity\Entity.hpp" />
     <ClInclude Include="Entity\Player.hpp" />
-    <ClInclude Include="Map/Layer.hpp" />
+    <ClInclude Include="HighAccuracyClock.hpp" />
     <ClInclude Include="Map/Map.hpp" />
-    <ClInclude Include="Map\Chunk.hpp" />
-    <ClInclude Include="Map\MapUtility.hpp" />
-    <ClInclude Include="Map\ObjectLayer.hpp" />
+    <ClInclude Include="Map\Layers\Layer.hpp" />
+    <ClInclude Include="Map\Tileset.hpp" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Map/TileLayer.hpp" />
-    <ClInclude Include="Map/Tileset.hpp" />
-    <ClInclude Include="Map/TextureTile.hpp" />
+    <ClInclude Include="Map\TextureTile.hpp" />
     <ClInclude Include="Utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

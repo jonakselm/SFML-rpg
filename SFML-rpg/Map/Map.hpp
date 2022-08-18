@@ -1,13 +1,9 @@
 #pragma once
 #include "Tileset.hpp"
-#include "Layer.hpp"
-#include "TileLayer.hpp"
-#include <vector>
 #include "TextureTile.hpp"
-#include "ObjectLayer.hpp"
 #include "Entity/Player.hpp"
-#include "Chunk.hpp"
 #include "Utility.hpp"
+#include "Layers/Layer.hpp"
 
 class Map
 {
@@ -29,16 +25,11 @@ public:
 private:
 	void loadTileset(const Json::Value &root);
 	void loadLayer(const Json::Value &root, const std::string &layerGroup = "none");
-	void loadChunks();
+	void loadTiles();
 
 private:
 	sf::Clock m_clock;
 	sf::Time m_time;
-	std::vector<std::variant<const TilebasedTileset, const ImageTileset>> m_tilesets;
-	std::vector<std::variant<TileLayer, ObjectLayer>> m_layers;
-	DynArray<Chunk> m_chunks;
-	LayerDetails m_mapDetails;
-	sf::Vector2i m_chunkSize = { 10, 10 };
 	// Sprites have the size of the initial texture
 	// Sprites are small and efficient objects
 	sf::Sprite m_mapSprite, m_minimapSprite;
@@ -46,5 +37,6 @@ private:
 	// Textures in general are big and inefficient objects since they store images
 	sf::RenderTexture m_texture;
 	sf::View m_gameView, m_minimapView;
+	std::vector<std::unique_ptr<Layer>> m_layers;
 	const Player *m_player = nullptr;
 };

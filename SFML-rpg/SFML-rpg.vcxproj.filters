@@ -19,6 +19,9 @@
     <Filter Include="Entities">
       <UniqueIdentifier>{42ef0188-eb32-4c45-aabf-a6052fd2fcdc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Map\Layers">
+      <UniqueIdentifier>{e751d5e1-c796-4fdd-8d1c-f8bae1f39bf0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,22 +30,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Map/Layer.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
     <ClCompile Include="Map/Map.cpp">
       <Filter>Map</Filter>
     </ClCompile>
-    <ClCompile Include="Map/TextureTile.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
-    <ClCompile Include="Map/TileLayer.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
-    <ClCompile Include="Map/Tileset.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
-    <ClCompile Include="Map\ObjectLayer.cpp">
+    <ClCompile Include="Map\TextureTile.cpp">
       <Filter>Map</Filter>
     </ClCompile>
     <ClCompile Include="Entity\Entity.cpp">
@@ -51,8 +42,11 @@
     <ClCompile Include="Entity\Player.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Map\Chunk.cpp">
-      <Filter>Map</Filter>
+    <ClCompile Include="HighAccuracyClock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\Layers\Layer.cpp">
+      <Filter>Map\Layers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,19 +56,7 @@
     <ClInclude Include="Map/Map.hpp">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="Map/Layer.hpp">
-      <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="Map/TextureTile.hpp">
-      <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="Map/TileLayer.hpp">
-      <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="Map/Tileset.hpp">
-      <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="Map\ObjectLayer.hpp">
+    <ClInclude Include="Map\TextureTile.hpp">
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Entity\Entity.hpp">
@@ -83,14 +65,17 @@
     <ClInclude Include="Entity\Player.hpp">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Map\MapUtility.hpp">
-      <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="Map\Chunk.hpp">
-      <Filter>Map</Filter>
-    </ClInclude>
     <ClInclude Include="Utility.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HighAccuracyClock.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\Tileset.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\Layers\Layer.hpp">
+      <Filter>Map\Layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

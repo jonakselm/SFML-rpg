@@ -3,9 +3,10 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "someMap.json",
+    "activeFile": "test.json",
     "expandedProjectPaths": [
         "C:/Users/jonak/source/repos/SFML-rpg/SFML-rpg/data",
+        "templates",
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -15,34 +16,87 @@
             "scaleInEditor": 1
         },
         "mountain_landscape.json": {
-            "scaleInDock": 1
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "noge.json": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 0.33
         },
         "someMap.json": {
-            "scale": 2,
-            "selectedLayer": 67,
+            "scale": 0.75,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 177,
-                "y": 70.5
+                "x": 799.9999999999999,
+                "y": 799.3333333333333
             }
         },
         "someOthertest.json": {
-            "scale": 2,
+            "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 201.5,
-                "y": 199.5
+                "x": 784,
+                "y": 607
             }
+        },
+        "test.json": {
+            "expandedGroupLayers": [
+                18
+            ],
+            "expandedObjectLayers": [
+                5
+            ],
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 341,
+                "y": -2
+            }
+        },
+        "test.json#EmbeddedCollection": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "test.json#cave": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "test.json#playerSprite_32x32": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "untitled.json": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 41.27272727272727,
+                "y": 53.99999999999999
+            }
+        },
+        "untitled.json#mountain_landscape": {
+            "scaleInDock": 1
         }
     },
     "frame.defaultDuration": 2000,
-    "map.height": 38,
+    "map.height": 2,
     "map.lastUsedFormat": "json",
-    "map.width": 49,
+    "map.width": 2,
     "openFiles": [
-        "someMap.json"
+        "test.json",
+        "noge.json"
     ],
     "project": "SFML-rpg.tiled-project",
+    "property.type": "int",
     "recentFiles": [
+        "noge.json",
+        "test.json",
+        "untitled.json",
+        "someOthertest.json",
+        "mountain_landscape.json",
         "someMap.json",
         "C:/Users/jonak/source/repos/Pokemon Darkness Fall/Graphics/Male Player Sprite/animation_test.tsx"
     ],

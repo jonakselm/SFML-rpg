@@ -18,14 +18,7 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 
 	file >> root;
 
-	m_mapDetails.width = root["width"].asInt();
-	m_mapDetails.height = root["height"].asInt();
 
-	m_mapDetails.tileSize.x = root["tilewidth"].asInt();
-	m_mapDetails.tileSize.y = root["tileheight"].asInt();
-
-	m_texture.create(m_mapDetails.width * m_mapDetails.tileSize.x,
-		m_mapDetails.height * m_mapDetails.tileSize.y);
 	m_mapSprite.setTexture(m_texture.getTexture());
 	m_minimapSprite.setTexture(m_texture.getTexture());
 	m_minimapSprite.setColor(sf::Color(255, 255, 255, 200));
@@ -50,9 +43,6 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 
 	std::cout << "Loading layers: " << m_time.asSeconds() << "s" << std::endl;
 
-	loadChunks();
-	for (auto &chunk : m_chunks)
-		chunk.drawToTexture();
 
 	return true;
 }
@@ -69,26 +59,6 @@ void Map::update(const sf::Time &elapsedTime)
 		m_gameView.move({ 1, 0 });
 
 	m_texture.clear();
-	for (auto &chunk : m_chunks)
-	{
-		chunk.update(elapsedTime);
-		chunk.drawToTarget(m_texture);
-	}
-	/*for (int i = 0; i < m_layers.size(); i++)
-	{
-		Layer *layer = nullptr;
-		if (std::holds_alternative<TileLayer>(m_layers[i]))
-			layer = &std::get<TileLayer>(m_layers[i]);
-		else
-			layer = &std::get<ObjectLayer>(m_layers[i]);
-		layer->update(elapsedTime);
-		layer->draw(m_texture);
-		if (layer->group == "Entity")
-		{
-			if (m_pPlayer != nullptr)
-				m_pPlayer->draw(m_texture);
-		}
-	}*/
 	m_texture.display();
 }
 
@@ -113,9 +83,6 @@ void Map::loadTileset(const Json::Value &root)
 		// Tilebased embedded
 		if (!val["image"].empty())
 		{
-			TilebasedTileset tileset;
-			tileset.load(val);
-			m_tilesets.emplace_back().emplace<const TilebasedTileset>(tileset);
 		}
 		// Non-embedded
 		else if (!val["source"].empty())
@@ -128,27 +95,16 @@ void Map::loadTileset(const Json::Value &root)
 			// Tilebased
 			if (newVal["grid"].empty())
 			{
-				TilebasedTileset tileset;
-				tileset.load(newVal);
-				tileset.firstgid = val["firstgid"].asInt();
-				m_tilesets.emplace_back().emplace<const TilebasedTileset>(tileset);
 			}
 			// Imagebased
 			else
 			{
-				ImageTileset tileset;
-				tileset.load(newVal);
-				tileset.firstgid = val["firstgid"].asInt();
-				m_tilesets.emplace_back().emplace<const ImageTileset>(tileset);
 
 			}
 		}
 		// Imagebased embedded
 		else if (!val["grid"].empty())
 		{
-			ImageTileset tileset;
-			tileset.load(val);
-			m_tilesets.emplace_back().emplace<const ImageTileset>(tileset);
 		}
 	}
 }
@@ -159,15 +115,11 @@ void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 	{
 		if (val["type"].asString() == "tilelayer")
 		{
-			TileLayer layer;
-			layer.load(val, layerGroup, m_tilesets, m_mapDetails);
-			m_layers.emplace_back().emplace<TileLayer>(layer);
+			m_layers.emplace_back(std::make_unique<Layer>());
+			m_layers.back()->loadTiles(val);
 		}
 		else if (val["type"].asString() == "objectgroup")
 		{
-			ObjectLayer layer;
-			layer.load(val, layerGroup, m_tilesets, m_mapDetails);
-			m_layers.emplace_back().emplace<ObjectLayer>(layer);
 		}
 		else if (val["type"].asString() == "group")
 		{
@@ -176,23 +128,7 @@ void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 	}
 }
 
-void Map::loadChunks()
+void Map::loadTiles()
 {
-	sf::Vector2i chunkBounds = { int(std::ceil(float(m_mapDetails.width) / m_chunkSize.x)), int(std::ceil(float(m_mapDetails.height) / m_chunkSize.y)) };
 
-	m_chunks.setSize(chunkBounds.x * chunkBounds.y);
-
-	for (int i = 0; i < m_chunks.size(); i++)
-	{
-		sf::Vector2i chunkGridPos = { i % chunkBounds.x * m_chunkSize.x, i / chunkBounds.x * m_chunkSize .y };
-		auto &chunk = m_chunks[i];
-		chunk.setProperties(m_mapDetails.tileSize, m_chunkSize);
-		chunk.setGridPos(chunkGridPos);
-		chunk.load();
-		for (auto &layer : m_layers)
-		{
-			if (const TileLayer *tileLayer = std::get_if<TileLayer>(&layer))
-				chunk.addTiles(*tileLayer, m_tilesets);
-		}
-	}
 }

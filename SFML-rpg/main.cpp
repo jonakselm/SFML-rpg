@@ -8,48 +8,14 @@ int main()
 {
 	sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML-rpg");
 
+	std::wstring str;
+
 	Map map;
-	map.load("data/maps/someMap.json", window.getSize());
+	map.load("data/maps/test.json", window.getSize());
 
 	Player player;
 
 	map.addPlayer(&player);
-
-	/*Json::Value tilesetRoot;
-	std::ifstream tilesetFile("data/maps/mountain_landscape.json");
-	tilesetFile >> tilesetRoot;
-	TilebasedTileset tileset;
-	tileset.load(tilesetRoot);
-	Json::Value objectRoot;
-	std::ifstream objectFile("data/maps/templates/rock.json");
-	objectFile >> objectRoot;
-	TemplateObject object;
-	object.load(objectRoot, tileset);
-
-	TextureTile tt;
-	tt.load(object, 1);*/
-	/*tt.m_transformable.setOrigin(0, 0);
-
-	tt.m_vertices[0].position = sf::Vector2f(0, 0);
-	tt.m_vertices[1].position = sf::Vector2f(32, 0);
-	tt.m_vertices[2].position = sf::Vector2f(32, 32);
-	tt.m_vertices[3].position = sf::Vector2f(0, 32);
-
-	tt.m_transformable.setPosition(100, 100);*/
-	
-	//tt.m_renderStates.texture = &tileset.texture;
-	/*tt.m_renderStates.transform = tt.m_transformable.getTransform();
-
-	auto rect = object.objProps.rect;
-
-	tt.m_vertices[0].texCoords = sf::Vector2f(rect.left, rect.top);
-	tt.m_vertices[1].texCoords = sf::Vector2f(rect.width, rect.top);
-	tt.m_vertices[2].texCoords = sf::Vector2f(rect.width, rect.height);
-	tt.m_vertices[3].texCoords = sf::Vector2f(rect.left, rect.height);
-	tt.m_vertices[0].color = sf::Color(255, 255, 255, 255);
-	tt.m_vertices[1].color = sf::Color(255, 255, 255, 128);
-	tt.m_vertices[2].color = sf::Color(255, 255, 255, 128);
-	tt.m_vertices[3].color = sf::Color(255, 255, 255, 0);*/
 
     sf::Clock clock;
     sf::Time time;
