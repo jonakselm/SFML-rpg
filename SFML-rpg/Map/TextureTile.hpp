@@ -20,6 +20,5 @@ private:
 private:
 	static constexpr int EDGE_COUNT = 4;
 	std::array<sf::Vertex, EDGE_COUNT> m_vertices;
-	sf::VertexBuffer m_buffer;
 	const sf::Texture *m_texture = nullptr;
 };

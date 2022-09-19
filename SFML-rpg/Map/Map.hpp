@@ -37,6 +37,9 @@ private:
 	// Textures in general are big and inefficient objects since they store images
 	sf::RenderTexture m_texture;
 	sf::View m_gameView, m_minimapView;
+	std::vector<std::unique_ptr<Tileset>> m_tilesets;
 	std::vector<std::unique_ptr<Layer>> m_layers;
+	std::vector<std::unique_ptr<TextureTile>> m_tiles;
 	const Player *m_player = nullptr;
+	sf::Vector2i mapsize, tilesize;
 };

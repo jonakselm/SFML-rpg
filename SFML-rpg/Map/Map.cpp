@@ -18,7 +18,13 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 
 	file >> root;
 
+	mapsize.x = root["width"].asInt();
+	mapsize.y = root["height"].asInt();
 
+	tilesize.x = root["tilewidth"].asInt();
+	tilesize.y = root["tileheight"].asInt();
+
+	m_texture.create(mapsize.x * tilesize.x, mapsize.y * tilesize.y);
 	m_mapSprite.setTexture(m_texture.getTexture());
 	m_minimapSprite.setTexture(m_texture.getTexture());
 	m_minimapSprite.setColor(sf::Color(255, 255, 255, 200));
@@ -43,6 +49,10 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 
 	std::cout << "Loading layers: " << m_time.asSeconds() << "s" << std::endl;
 
+	loadTiles();
+	m_time = m_clock.restart();
+
+	std::cout << "Loading tiles: " << m_time.asSeconds() << "s" << std::endl;
 
 	return true;
 }
@@ -59,6 +69,11 @@ void Map::update(const sf::Time &elapsedTime)
 		m_gameView.move({ 1, 0 });
 
 	m_texture.clear();
+	for (const auto &tile : m_tiles)
+	{
+		tile->update();
+		m_texture.draw(*tile);
+	}
 	m_texture.display();
 }
 
@@ -78,11 +93,14 @@ void Map::draw(sf::RenderTarget &target) const
 
 void Map::loadTileset(const Json::Value &root)
 {
-	for (const auto &val : root["tilesets"])
+	for (auto &val : root["tilesets"])
 	{
 		// Tilebased embedded
 		if (!val["image"].empty())
 		{
+			m_tilesets.emplace_back(std::make_unique<Tileset>());
+			m_tilesets.back()->load(val);
+			m_tilesets.back()->setFirstgid(val["firstgid"].asInt());
 		}
 		// Non-embedded
 		else if (!val["source"].empty())
@@ -92,15 +110,20 @@ void Map::loadTileset(const Json::Value &root)
 			std::ifstream file(sourcePath);
 			file >> newVal;
 
+
+			m_tilesets.emplace_back(std::make_unique<Tileset>());
+
 			// Tilebased
 			if (newVal["grid"].empty())
 			{
+				m_tilesets.back()->load(newVal);
 			}
 			// Imagebased
 			else
 			{
 
 			}
+			m_tilesets.back()->setFirstgid(val["firstgid"].asInt());
 		}
 		// Imagebased embedded
 		else if (!val["grid"].empty())
@@ -130,5 +153,31 @@ void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 
 void Map::loadTiles()
 {
-
+	for (const auto &layer : m_layers)
+	{
+		for (int y = 0; y < layer->getSize().y; y++)
+		{
+			for (int x = 0; x < layer->getSize().x; x++)
+			{
+				int tileData = layer->getTile(sf::Vector2i(x, y));
+				if (tileData != 0)
+				{
+					m_tiles.emplace_back(std::make_unique<TextureTile>());
+					const Tileset &t = **std::find_if(m_tilesets.rbegin(), m_tilesets.rend(),
+						[tileData](const std::unique_ptr<Tileset> &tileset)
+						{
+							return tileset->getFirstgid() <= tileData;
+						});
+					auto &tile = *m_tiles.back();
+					tile.setTexture(t.getTexture());
+					int localId = tileData - t.getFirstgid();
+					sf::Vector2i tilesize = t.getTilesize();
+					auto topLeft = sf::Vector2i(localId % t.getSize().x * tilesize.x,
+						localId / t.getSize().x * tilesize.y);
+					tile.setTextureRect(sf::IntRect(topLeft, tilesize));
+					tile.setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y));
+				}
+			}
+		}
+	}
 }

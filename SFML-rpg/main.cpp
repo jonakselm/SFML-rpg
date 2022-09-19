@@ -57,10 +57,6 @@ int main()
 		window.clear();
         map.draw(window);
 		window.display();
-
-		std::cout << "Frame duration: " << time.asSeconds() << "s" << std::endl;
-		std::wstring wstr = std::to_wstring(1000000 / time.asMicroseconds());
-		SetWindowText(window.getSystemHandle(), wstr.c_str());
 	}
 
 	float averageTime = totalElapsedTime.asSeconds() / iterations;

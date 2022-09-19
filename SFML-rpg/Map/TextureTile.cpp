@@ -5,8 +5,14 @@
 
 TextureTile::TextureTile()
 {
-	m_buffer.create(EDGE_COUNT);
-	m_buffer.setPrimitiveType(sf::Quads);
+	// Top left
+	m_vertices[0].position = sf::Vector2f(float(0), float(0));
+	// Top right
+	m_vertices[1].position = sf::Vector2f(float(32), float(0));
+	// Bottom right
+	m_vertices[2].position = sf::Vector2f(float(32), float(32));
+	// Bottom left
+	m_vertices[3].position = sf::Vector2f(float(0), float(32));
 }
 
 TextureTile::~TextureTile()
@@ -16,7 +22,6 @@ TextureTile::~TextureTile()
 
 void TextureTile::update()
 {
-	m_buffer.update(m_vertices.data());
 }
 
 void TextureTile::setTexture(const sf::Texture &texture)
@@ -57,5 +62,5 @@ void TextureTile::draw(sf::RenderTarget &target, sf::RenderStates states) const
 	states.texture = m_texture;
 	states.transform *= getTransform();
 
-	target.draw(m_buffer, states);
+	target.draw(m_vertices.data(), EDGE_COUNT, sf::Quads, states);
 }

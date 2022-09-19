@@ -5,6 +5,7 @@ public:
 
 	void loadTiles(const Json::Value &root);
 	int getTile(const sf::Vector2i &gridPos) const;
+	const std::vector<int> getTiles() const;
 
 	const sf::Vector2i &getSize() const;
 

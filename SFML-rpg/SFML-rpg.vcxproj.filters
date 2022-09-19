@@ -48,6 +48,9 @@
     <ClCompile Include="Map\Layers\Layer.cpp">
       <Filter>Map\Layers</Filter>
     </ClCompile>
+    <ClCompile Include="Map\Tileset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

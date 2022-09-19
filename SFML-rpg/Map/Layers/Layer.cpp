@@ -17,6 +17,11 @@ int Layer::getTile(const sf::Vector2i &gridPos) const
 	return m_tiles[gridPos.x + m_size.x * gridPos.y];
 }
 
+const std::vector<int> Layer::getTiles() const
+{
+	return m_tiles;
+}
+
 const sf::Vector2i &Layer::getSize() const
 {
 	return m_size;
