@@ -5,14 +5,6 @@
 
 TextureTile::TextureTile()
 {
-	// Top left
-	m_vertices[0].position = sf::Vector2f(float(0), float(0));
-	// Top right
-	m_vertices[1].position = sf::Vector2f(float(32), float(0));
-	// Bottom right
-	m_vertices[2].position = sf::Vector2f(float(32), float(32));
-	// Bottom left
-	m_vertices[3].position = sf::Vector2f(float(0), float(32));
 }
 
 TextureTile::~TextureTile()
@@ -27,6 +19,24 @@ void TextureTile::update()
 void TextureTile::setTexture(const sf::Texture &texture)
 {
 	m_texture = &texture;
+
+	// Top left
+	m_vertices[0].texCoords = sf::Vector2f(0, 0);
+	// Top right
+	m_vertices[1].texCoords = sf::Vector2f(float(texture.getSize().x), 0);
+	// Bottom right
+	m_vertices[2].texCoords = sf::Vector2f(texture.getSize());
+	// Bottom left
+	m_vertices[3].texCoords = sf::Vector2f(0, float(texture.getSize().y));
+
+	// Top left
+	m_vertices[0].position = sf::Vector2f(0, 0);
+	// Top right
+	m_vertices[1].position = sf::Vector2f(float(texture.getSize().x), 0);
+	// Bottom right
+	m_vertices[2].position = sf::Vector2f(texture.getSize());
+	// Bottom left
+	m_vertices[3].position = sf::Vector2f(0, float(texture.getSize().y));
 }
 
 void TextureTile::setTextureRect(const sf::IntRect &textureRect)
@@ -42,6 +52,15 @@ void TextureTile::setTextureRect(const sf::IntRect &textureRect)
 	m_vertices[2].texCoords = sf::Vector2f(float(textureRight), float(textureBottom));
 	// Bottom left
 	m_vertices[3].texCoords = sf::Vector2f(float(textureRect.left), float(textureBottom));
+
+	// Top left
+	m_vertices[0].position = sf::Vector2f(0, 0);
+	// Top right
+	m_vertices[1].position = sf::Vector2f(float(textureRect.width), 0);
+	// Bottom right
+	m_vertices[2].position = sf::Vector2f(float(textureRect.width), float(textureRect.height));
+	// Bottom left
+	m_vertices[3].position = sf::Vector2f(0, float(textureRect.height));
 }
 
 const sf::Texture &TextureTile::getTexture() const
