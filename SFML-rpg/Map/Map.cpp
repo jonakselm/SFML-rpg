@@ -24,19 +24,34 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 	m_tilesize.x = root["tilewidth"].asInt();
 	m_tilesize.y = root["tileheight"].asInt();
 
-	m_texture.create(m_mapsize.x * m_tilesize.x, m_mapsize.y * m_tilesize.y);
-	m_mapSprite.setTexture(m_texture.getTexture());
-	m_minimapSprite.setTexture(m_texture.getTexture());
-	m_minimapSprite.setColor(sf::Color(255, 255, 255, 200));
+	auto mapBounds = sf::Vector2f(m_mapsize.x * m_tilesize.x, m_mapsize.y * m_tilesize.y);
+	//m_texture.create(m_mapsize.x * m_tilesize.x, m_mapsize.y * m_tilesize.y);
+	//m_mapSprite.setTexture(m_texture.getTexture());
+	//m_minimapSprite.setTexture(m_texture.getTexture());
+	//m_minimapSprite.setColor(sf::Color(255, 255, 255, 200));
 
-	auto textureSize = sf::Vector2f(m_texture.getTexture().getSize());
-	std::cout << "Created texture's size: " << textureSize.x << "x" << textureSize.y << std::endl;
+	//auto textureSize = sf::Vector2f(m_texture.getTexture().getSize());
+	//std::cout << "Created texture's size: " << textureSize.x << "x" << textureSize.y << std::endl;
 
 	m_gameView.reset(sf::FloatRect(sf::Vector2f(0, 0), sf::Vector2f(windowSize)));
-	m_minimapView.reset(sf::FloatRect(sf::Vector2f(0, 0), textureSize));
+	m_minimapView.reset(sf::FloatRect(sf::Vector2f(0, 0), mapBounds));
 
 	m_gameView.setViewport(sf::FloatRect(0, 0, 1, 1));
 	m_minimapView.setViewport(sf::FloatRect(0.75f, 0.f, 0.25f, 0.25f));
+
+	// Sets the opacity of whatever uses this shader to 70%
+	const std::string opacityShader = \
+		"uniform sampler2D texture;" \
+		"void main()" \
+		"{" \
+		"     vec4 pixel = texture2D(texture, gl_TexCoord[0].xy);" \
+		"     gl_FragColor = gl_Color * pixel;" \
+		"     gl_FragColor.a = 0.7;" \
+		"}";
+	if (!m_opacityShader.loadFromMemory(opacityShader, sf::Shader::Fragment))
+	{
+		exit(101);
+	}
 
 	m_time = m_clock.restart();
 	loadTileset(root);
@@ -68,14 +83,14 @@ void Map::update(const sf::Time &elapsedTime)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		m_gameView.move({ 1, 0 });
 
-	m_texture.clear();
+	//m_texture.clear();
 	for (auto &chunk : m_chunks)
 	{
 		if (chunk->hasAnimation())
 			chunk->update();
-		chunk->draw(m_texture);
+		//chunk->draw(m_texture);
 	}
-	m_texture.display();
+	//m_texture.display();
 }
 
 void Map::addPlayer(const Player *pPlayer)
@@ -89,10 +104,10 @@ void Map::draw(sf::RenderTarget &target) const
 	for (const auto &chunk : m_chunks)
 		chunk->draw(target);
 	//target.draw(m_mapSprite);
-	
+
 	target.setView(m_minimapView);
 	for (const auto &chunk : m_chunks)
-		chunk->draw(target);
+		chunk->draw(target, &m_opacityShader);
 	//target.draw(m_minimapSprite);
 }
 
@@ -171,7 +186,6 @@ void Map::loadTiles()
 		for (int x = 0; x < chunksWidth; x++)
 			m_chunks.emplace_back(std::make_unique<Chunk>(m_chunkSize, m_tilesize,
 				sf::Vector2f(x, y)));
-	// TODO: Make the layers draw to chunks instead of the deprecated layerdrawers
 	for (const auto &layer : m_layers)
 	{
 		int chunkY = 0;

@@ -17,9 +17,9 @@ void Chunk::addTile(TextureTile &&tile)
 	m_tiles.push_back(tile);
 }
 
-void Chunk::draw(sf::RenderTarget &target) const
+void Chunk::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-	target.draw(m_sprite);
+	target.draw(m_sprite, states);
 }
 
 void Chunk::update()

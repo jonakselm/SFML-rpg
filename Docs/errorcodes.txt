@@ -1,1 +1,2 @@
 E100 - Failed to load tileset texture
+E101 - Failed to load shader

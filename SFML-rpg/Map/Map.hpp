@@ -33,10 +33,10 @@ private:
 	sf::Time m_time;
 	// Sprites have the size of the initial texture
 	// Sprites are small and efficient objects
-	sf::Sprite m_mapSprite, m_minimapSprite;
+	//sf::Sprite m_mapSprite, m_minimapSprite;
 	sf::Font m_font;
 	// Textures in general are big and inefficient objects since they store images
-	sf::RenderTexture m_texture;
+	//sf::RenderTexture m_texture;
 	sf::View m_gameView, m_minimapView;
 	std::vector<Tileset> m_tilesets;
 	std::vector<Layer> m_layers;
@@ -44,4 +44,5 @@ private:
 	std::vector<std::unique_ptr<Chunk>> m_chunks;
 	const Player *m_player = nullptr;
 	sf::Vector2i m_mapsize, m_tilesize;
+	sf::Shader m_opacityShader;
 };

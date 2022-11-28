@@ -8,7 +8,7 @@ public:
 
 	void addTile(TextureTile &&tile);
 
-	void draw(sf::RenderTarget &target) const;
+	void draw(sf::RenderTarget &target, sf::RenderStates states = sf::RenderStates::Default) const;
 	void update();
 
 	bool hasAnimation() const;
