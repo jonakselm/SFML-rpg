@@ -18,13 +18,13 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 
 	file >> root;
 
-	mapsize.x = root["width"].asInt();
-	mapsize.y = root["height"].asInt();
+	m_mapsize.x = root["width"].asInt();
+	m_mapsize.y = root["height"].asInt();
 
-	tilesize.x = root["tilewidth"].asInt();
-	tilesize.y = root["tileheight"].asInt();
+	m_tilesize.x = root["tilewidth"].asInt();
+	m_tilesize.y = root["tileheight"].asInt();
 
-	m_texture.create(mapsize.x * tilesize.x, mapsize.y * tilesize.y);
+	m_texture.create(m_mapsize.x * m_tilesize.x, m_mapsize.y * m_tilesize.y);
 	m_mapSprite.setTexture(m_texture.getTexture());
 	m_minimapSprite.setTexture(m_texture.getTexture());
 	m_minimapSprite.setColor(sf::Color(255, 255, 255, 200));
@@ -69,10 +69,11 @@ void Map::update(const sf::Time &elapsedTime)
 		m_gameView.move({ 1, 0 });
 
 	m_texture.clear();
-	for (const auto &tile : m_tiles)
+	for (auto &chunk : m_chunks)
 	{
-		tile->update();
-		m_texture.draw(*tile);
+		if (chunk->hasAnimation())
+			chunk->update();
+		chunk->draw(m_texture);
 	}
 	m_texture.display();
 }
@@ -85,10 +86,14 @@ void Map::addPlayer(const Player *pPlayer)
 void Map::draw(sf::RenderTarget &target) const
 {
 	target.setView(m_gameView);
-	target.draw(m_mapSprite);
+	for (const auto &chunk : m_chunks)
+		chunk->draw(target);
+	//target.draw(m_mapSprite);
 	
 	target.setView(m_minimapView);
-	target.draw(m_minimapSprite);
+	for (const auto &chunk : m_chunks)
+		chunk->draw(target);
+	//target.draw(m_minimapSprite);
 }
 
 void Map::loadTileset(const Json::Value &root)
@@ -98,9 +103,9 @@ void Map::loadTileset(const Json::Value &root)
 		// Tilebased embedded
 		if (!val["image"].empty())
 		{
-			m_tilesets.emplace_back(std::make_unique<Tileset>());
-			m_tilesets.back()->load(val);
-			m_tilesets.back()->setFirstgid(val["firstgid"].asInt());
+			m_tilesets.emplace_back();
+			m_tilesets.back().load(val);
+			m_tilesets.back().setFirstgid(val["firstgid"].asInt());
 		}
 		// Non-embedded
 		else if (!val["source"].empty())
@@ -111,19 +116,19 @@ void Map::loadTileset(const Json::Value &root)
 			file >> newVal;
 
 
-			m_tilesets.emplace_back(std::make_unique<Tileset>());
+			m_tilesets.emplace_back();
 
 			// Tilebased
 			if (newVal["grid"].empty())
 			{
-				m_tilesets.back()->load(newVal);
+				m_tilesets.back().load(newVal);
 			}
 			// Imagebased
 			else
 			{
 
 			}
-			m_tilesets.back()->setFirstgid(val["firstgid"].asInt());
+			m_tilesets.back().setFirstgid(val["firstgid"].asInt());
 		}
 		// Imagebased embedded
 		else if (!val["grid"].empty())
@@ -134,50 +139,73 @@ void Map::loadTileset(const Json::Value &root)
 
 void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 {
+	std::vector<Json::Value> objectLayers;
 	for (const auto &val : root["layers"])
 	{
 		if (val["type"].asString() == "tilelayer")
 		{
-			m_layers.emplace_back(std::make_unique<Layer>());
-			m_layers.back()->loadTiles(val);
+			m_layers.emplace_back();
+			m_layers.back().loadTiles(val);
 		}
 		else if (val["type"].asString() == "objectgroup")
 		{
+			objectLayers.push_back(val);
 		}
 		else if (val["type"].asString() == "group")
 		{
 			loadLayer(val, val["name"].asString());
 		}
 	}
+	for (const auto &val : objectLayers)
+	{
+		// TODO: Make objects from objectlayers
+	}
 }
 
 void Map::loadTiles()
 {
+	// Name is not descriptive enough, but this means the amounts of chunks in each axis
+	int chunksWidth = std::ceil(float(m_mapsize.x)) / m_chunkSize.x;
+	int chunksHeight = (int)std::ceil(float(m_mapsize.y)) / m_chunkSize.y;
+	for (int y = 0; y < chunksHeight; y++)
+		for (int x = 0; x < chunksWidth; x++)
+			m_chunks.emplace_back(std::make_unique<Chunk>(m_chunkSize, m_tilesize,
+				sf::Vector2f(x, y)));
+	// TODO: Make the layers draw to chunks instead of the deprecated layerdrawers
 	for (const auto &layer : m_layers)
 	{
-		for (int y = 0; y < layer->getSize().y; y++)
+		int chunkY = 0;
+		for (int y = 0; y < layer.getSize().y; y++)
 		{
-			for (int x = 0; x < layer->getSize().x; x++)
+			int chunkX = 0; 
+			if (y * m_tilesize.y >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth]->getBottomRight().y)
+				chunkY++;
+			for (int x = 0; x < layer.getSize().x; x++)
 			{
-				int tileData = layer->getTile(sf::Vector2i(x, y));
+				if (x * m_tilesize.x >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth]->getBottomRight().x)
+					chunkX++;
+				int tileData = layer.getTile(sf::Vector2i(x, y));
 				if (tileData != 0)
 				{
-					m_tiles.emplace_back(std::make_unique<TextureTile>());
-					const Tileset &t = **std::find_if(m_tilesets.rbegin(), m_tilesets.rend(),
-						[tileData](const std::unique_ptr<Tileset> &tileset)
+					TextureTile tile;
+					const Tileset &t = *std::find_if(m_tilesets.rbegin(), m_tilesets.rend(),
+						[tileData](const Tileset &tileset)
 						{
-							return tileset->getFirstgid() <= tileData;
+							return tileset.getFirstgid() <= tileData;
 						});
-					auto &tile = *m_tiles.back();
 					tile.setTexture(t.getTexture());
 					int localId = tileData - t.getFirstgid();
 					sf::Vector2i tilesize = t.getTilesize();
 					auto topLeft = sf::Vector2i(localId % t.getSize().x * tilesize.x,
 						localId / t.getSize().x * tilesize.y);
 					tile.setTextureRect(sf::IntRect(topLeft, tilesize));
-					tile.setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y));
+					Chunk &chunk = *m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth];
+					tile.setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y) - chunk.getPosition());
+					chunk.addTile(std::move(tile));
 				}
 			}
 		}
 	}
+	for (auto &chunk : m_chunks)
+		chunk->update();
 }

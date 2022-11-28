@@ -6,6 +6,7 @@
 
 int main()
 {
+	// TODO: Use chunks, because of efficiency
 	sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML-rpg");
 
 	std::wstring str;

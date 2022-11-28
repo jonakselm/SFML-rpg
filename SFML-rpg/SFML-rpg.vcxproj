@@ -176,6 +176,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map/Map.cpp" />
     <ClCompile Include="Map\Layers\Layer.cpp" />
+    <ClCompile Include="Map\Layers\Chunk.cpp" />
     <ClCompile Include="Map\Tileset.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -191,6 +192,7 @@
     <ClInclude Include="HighAccuracyClock.hpp" />
     <ClInclude Include="Map/Map.hpp" />
     <ClInclude Include="Map\Layers\Layer.hpp" />
+    <ClInclude Include="Map\Layers\Chunk.hpp" />
     <ClInclude Include="Map\Tileset.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Map\TextureTile.hpp" />

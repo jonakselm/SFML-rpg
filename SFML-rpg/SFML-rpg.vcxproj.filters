@@ -51,6 +51,9 @@
     <ClCompile Include="Map\Tileset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Map\Layers\Chunk.cpp">
+      <Filter>Map\Layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -78,6 +81,9 @@
       <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Map\Layers\Layer.hpp">
+      <Filter>Map\Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\Layers\Chunk.hpp">
       <Filter>Map\Layers</Filter>
     </ClInclude>
   </ItemGroup>
