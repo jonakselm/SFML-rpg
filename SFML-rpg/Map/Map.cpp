@@ -112,7 +112,7 @@ void Map::draw(sf::RenderTarget &target) const
 
 	target.setView(m_minimapView);
 	for (const auto &chunk : m_chunks)
-		// Only for testing selectiv
+		// Only for testing selective rendering
 		//if (isInView(*chunk))
 		chunk->draw(target, &m_opacityShader);
 	//target.draw(m_minimapSprite);
