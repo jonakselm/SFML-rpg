@@ -45,6 +45,11 @@ sf::Vector2i Chunk::getGridSize() const
 	return m_gridSize;
 }
 
+sf::Vector2i Chunk::getSize() const
+{
+	return static_cast<sf::Vector2i>(m_texture.getSize());
+}
+
 sf::Vector2i Chunk::getBottomRight() const
 {
 	return sf::Vector2i(m_sprite.getPosition() + sf::Vector2f(m_texture.getSize()));

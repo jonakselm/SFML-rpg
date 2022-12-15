@@ -15,6 +15,7 @@ public:
 
 	void setGridSize(sf::Vector2i size);
 	sf::Vector2i getGridSize() const;
+	sf::Vector2i getSize() const;
 	sf::Vector2i getBottomRight() const;
 	const sf::Vector2f &getPosition() const;
 

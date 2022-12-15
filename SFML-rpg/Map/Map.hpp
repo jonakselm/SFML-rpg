@@ -27,6 +27,8 @@ private:
 	void loadTileset(const Json::Value &root);
 	void loadLayer(const Json::Value &root, const std::string &layerGroup = "none");
 	void loadTiles();
+	// Only chunks within the view (with a threshold of half a view size) are rendered
+	bool isInView(const Chunk &chunk) const;
 
 private:
 	sf::Clock m_clock;

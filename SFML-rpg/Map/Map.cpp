@@ -86,11 +86,7 @@ void Map::update(const sf::Time &elapsedTime)
 	//m_texture.clear();
 	for (auto &chunk : m_chunks)
 	{
-		// Only chunks within the view (with a threshold of half a view size) are rendered
-		if (chunk->getPosition().x < m_gameView.getCenter().x + m_gameView.getSize().x &&
-			chunk->getPosition().x > m_gameView.getCenter().x - m_gameView.getSize().x &&
-			chunk->getPosition().y < m_gameView.getCenter().y + m_gameView.getSize().y &&
-			chunk->getPosition().y > m_gameView.getCenter().y - m_gameView.getSize().y)
+		if (isInView(*chunk))
 		{
 			if (chunk->hasAnimation())
 				chunk->update();
@@ -110,11 +106,14 @@ void Map::draw(sf::RenderTarget &target) const
 {
 	target.setView(m_gameView);
 	for (const auto &chunk : m_chunks)
-		chunk->draw(target);
+		if (isInView(*chunk))
+			chunk->draw(target);
 	//target.draw(m_mapSprite);
 
 	target.setView(m_minimapView);
 	for (const auto &chunk : m_chunks)
+		// Only for testing selectiv
+		//if (isInView(*chunk))
 		chunk->draw(target, &m_opacityShader);
 	//target.draw(m_minimapSprite);
 }
@@ -230,4 +229,14 @@ void Map::loadTiles()
 	}
 	for (auto &chunk : m_chunks)
 		chunk->update();
+}
+
+bool Map::isInView(const Chunk &chunk) const
+{
+	auto maxX = m_gameView.getCenter().x + m_gameView.getSize().x;
+	auto minX = m_gameView.getCenter().x - m_gameView.getSize().x;
+	auto maxY = m_gameView.getCenter().y + m_gameView.getSize().y;
+	auto minY = m_gameView.getCenter().y - m_gameView.getSize().y;
+	return chunk.getPosition().x < maxX && chunk.getPosition().x + chunk.getSize().x > minX &&
+		chunk.getPosition().y < maxY && chunk.getPosition().y + chunk.getSize().y > minY;
 }
