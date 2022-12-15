@@ -86,9 +86,17 @@ void Map::update(const sf::Time &elapsedTime)
 	//m_texture.clear();
 	for (auto &chunk : m_chunks)
 	{
-		if (chunk->hasAnimation())
-			chunk->update();
-		//chunk->draw(m_texture);
+		// Only chunks within the view (with a threshold of half a view size) are rendered
+		if (chunk->getPosition().x < m_gameView.getCenter().x + m_gameView.getSize().x &&
+			chunk->getPosition().x > m_gameView.getCenter().x - m_gameView.getSize().x &&
+			chunk->getPosition().y < m_gameView.getCenter().y + m_gameView.getSize().y &&
+			chunk->getPosition().y > m_gameView.getCenter().y - m_gameView.getSize().y)
+		{
+			if (chunk->hasAnimation())
+				chunk->update();
+			//for (int i = 0; i < 10000; i++)
+				//chunk->draw(m_texture);
+		}
 	}
 	//m_texture.display();
 }
