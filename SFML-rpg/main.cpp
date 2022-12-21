@@ -22,7 +22,7 @@ int main()
     sf::Time time;
 	sf::Time totalElapsedTime;
 	int iterations = 0;
-	float speed = 64.f;
+	float speed = 32.f;
 
 	while (window.isOpen())
 	{
@@ -35,23 +35,25 @@ int main()
 				window.close();
 				break;
 			case sf::Event::KeyPressed:
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
-					sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-					player.move(0, -speed * time.asSeconds());
-				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
-					sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-					player.move(0, speed * time.asSeconds());
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
+				if (//sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
 					sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-					player.move(-speed * time.asSeconds(), 0);
-				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F) ||
+					player.move(-speed, 0);
+				else if (//sf::Keyboard::isKeyPressed(sf::Keyboard::F) ||
 					sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-					player.move(speed * time.asSeconds(), 0);
+					player.move(speed, 0);
+				else
+					if (//sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
+						sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+						player.move(0, -speed);
+					else if (//sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
+						sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+						player.move(0, speed);
 				break;
 			}
 		}
         time = clock.restart();
         map.update(time);
+		player.update(time);
 		totalElapsedTime += time;
 		iterations++;
 

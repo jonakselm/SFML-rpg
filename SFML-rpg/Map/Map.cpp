@@ -88,6 +88,7 @@ void Map::update(const sf::Time &elapsedTime)
 	{
 		if (isInView(*chunk))
 		{
+			// TODO: Support for animations
 			if (chunk->hasAnimation())
 				chunk->update();
 			//for (int i = 0; i < 10000; i++)
@@ -105,16 +106,20 @@ void Map::addPlayer(const Player *pPlayer)
 void Map::draw(sf::RenderTarget &target) const
 {
 	target.setView(m_gameView);
-	for (const auto &chunk : m_chunks)
-		if (isInView(*chunk))
-			chunk->draw(target);
+	for (int i = 0; i < m_chunks.size() / 2; i++)
+		if (isInView(*m_chunks[i]))
+			m_chunks[i]->draw(target);
+	m_player->draw(target);
+	for (int i = m_chunks.size() / 2; i < m_chunks.size(); i++)
+		if (isInView(*m_chunks[i]))
+			m_chunks[i]->draw(target);
 	//target.draw(m_mapSprite);
 
-	target.setView(m_minimapView);
+	/*target.setView(m_minimapView);
 	for (const auto &chunk : m_chunks)
 		// Only for testing selective rendering
 		//if (isInView(*chunk))
-		chunk->draw(target, &m_opacityShader);
+		chunk->draw(target, &m_opacityShader);*/
 	//target.draw(m_minimapSprite);
 }
 
@@ -167,7 +172,7 @@ void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 		if (val["type"].asString() == "tilelayer")
 		{
 			m_layers.emplace_back();
-			m_layers.back().loadTiles(val);
+			m_layers.back().loadTiles(val, layerGroup);
 		}
 		else if (val["type"].asString() == "objectgroup")
 		{
@@ -189,21 +194,27 @@ void Map::loadTiles()
 	// Name is not descriptive enough, but this means the amounts of chunks in each axis
 	int chunksWidth = std::ceil(float(m_mapsize.x)) / m_chunkSize.x;
 	int chunksHeight = (int)std::ceil(float(m_mapsize.y)) / m_chunkSize.y;
-	for (int y = 0; y < chunksHeight; y++)
-		for (int x = 0; x < chunksWidth; x++)
-			m_chunks.emplace_back(std::make_unique<Chunk>(m_chunkSize, m_tilesize,
-				sf::Vector2f(x, y)));
+	for (int z = 0; z < 2; z++)
+		for (int y = 0; y < chunksHeight; y++)
+			for (int x = 0; x < chunksWidth; x++)
+				m_chunks.emplace_back(std::make_unique<Chunk>(m_chunkSize, m_tilesize,
+					sf::Vector2f(x, y)));
 	for (const auto &layer : m_layers)
 	{
+		int chunkZ = 0;
+		if (layer.getGroup() == "Walk Under")
+			chunkZ = 1;
 		int chunkY = 0;
 		for (int y = 0; y < layer.getSize().y; y++)
 		{
-			int chunkX = 0; 
-			if (y * m_tilesize.y >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth]->getBottomRight().y)
+			int chunkX = 0;
+			if (y * m_tilesize.y >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth +
+				(size_t)chunkZ * chunksWidth * chunksHeight]->getBottomRight().y)
 				chunkY++;
 			for (int x = 0; x < layer.getSize().x; x++)
 			{
-				if (x * m_tilesize.x >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth]->getBottomRight().x)
+				if (x * m_tilesize.x >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth +
+					(size_t)chunkZ * chunksWidth * chunksHeight]->getBottomRight().x)
 					chunkX++;
 				int tileData = layer.getTile(sf::Vector2i(x, y));
 				if (tileData != 0)
@@ -220,7 +231,8 @@ void Map::loadTiles()
 					auto topLeft = sf::Vector2i(localId % t.getSize().x * tilesize.x,
 						localId / t.getSize().x * tilesize.y);
 					tile.setTextureRect(sf::IntRect(topLeft, tilesize));
-					Chunk &chunk = *m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth];
+					Chunk &chunk = *m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth +
+						(size_t)chunkZ * chunksWidth * chunksHeight];
 					tile.setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y) - chunk.getPosition());
 					chunk.addTile(std::move(tile));
 				}
