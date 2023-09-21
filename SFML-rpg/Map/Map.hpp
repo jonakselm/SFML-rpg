@@ -1,7 +1,7 @@
 #pragma once
 #include "Tileset.hpp"
 #include "TextureTile.hpp"
-#include "Entity/Player.hpp"
+#include "Player.hpp"
 #include "Utility.hpp"
 #include "Layers/Layer.hpp"
 #include "Layers/Chunk.hpp"

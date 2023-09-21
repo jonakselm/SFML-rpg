@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "Map/Map.hpp"
 #include <iostream>
-#include <Windows.h>
+//#include <Windows.h>
 #include "Entity/Player.hpp"
 
 int main()
 {
 	// TODO: Use chunks, because of efficiency
 	sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML-rpg");
+	window.setFramerateLimit(60);
 
 	std::wstring str;
 

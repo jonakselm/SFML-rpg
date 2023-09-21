@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Map.hpp"
 #include <iostream>
+#include <cmath>
 
 Map::Map()
 {
