@@ -3,8 +3,8 @@
 #include "TextureTile.hpp"
 #include "Player.hpp"
 #include "Utility.hpp"
-#include "Layers/Layer.hpp"
-#include "Layers/Chunk.hpp"
+#include "Layer.hpp"
+#include "Chunk.hpp"
 
 class Map
 {

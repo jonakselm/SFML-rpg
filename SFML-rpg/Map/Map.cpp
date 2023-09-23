@@ -2,6 +2,7 @@
 #include "Map.hpp"
 #include <iostream>
 #include <cmath>
+#include <filesystem>
 
 Map::Map()
 {
@@ -16,8 +17,16 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 	Json::Value root;
 
 	std::ifstream file(filename);
+	
 
-	file >> root;
+	if (file.is_open())
+	{
+    	file >> root;
+	}
+	else
+	{
+		std::cout << "Failed to load map file: \"" << filename << "\"" << "current dir is: " << std::filesystem::current_path() << std::endl; 
+	}
 
 	m_mapsize.x = root["width"].asInt();
 	m_mapsize.y = root["height"].asInt();
@@ -139,7 +148,7 @@ void Map::loadTileset(const Json::Value &root)
 		else if (!val["source"].empty())
 		{
 			Json::Value newVal;
-			std::string sourcePath = "data/maps/" + val["source"].asString();
+			std::string sourcePath = "../SFML-rpg/data/maps/" + val["source"].asString();
 			std::ifstream file(sourcePath);
 			file >> newVal;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../TextureTile.hpp"
+#include "TextureTile.hpp"
 
 class Chunk
 {

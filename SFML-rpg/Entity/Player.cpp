@@ -8,7 +8,7 @@ Player::Player()
 {
 	m_size = { 32, 32 };
 
-	m_texture.loadFromFile("data/player sprites/playerSprite_32x32.png");
+	m_texture.loadFromFile("../SFML-rpg/data/Player sprites/playerSprite_32x32.png");
 	m_sprite.setTexture(m_texture);
 }
 

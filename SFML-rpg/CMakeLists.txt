@@ -6,12 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(SFML-rpg)
 
-add_subdirectory(Map)
-add_subdirectory(Entity)
-add_executable(SFML-rpg main.cpp)
+add_executable(SFML-rpg main.cpp stdafx.cpp Map/Chunk.cpp Map/Layer.cpp
+		Map/Map.cpp Map/TextureTile.cpp Map/Tileset.cpp
+		Entity/Entity.cpp Entity/Player.cpp)
 target_precompile_headers(SFML-rpg PUBLIC stdafx.h)
-# Link my subdirectories
-target_link_libraries(${PROJECT_NAME} PUBLIC libEntity libMap)
 # Link jsoncpp
 target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp)
 # Link sfml
@@ -19,6 +17,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE sfml-window
 										sfml-system
 										sfml-graphics)
 target_include_directories(${PROJECT_NAME}
-		PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Map
-		PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Map/Layers
-		PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Entity)
+		PUBLIC ${CMAKE_SOURCE_DIR}
+		PUBLIC ${CMAKE_SOURCE_DIR}/Map
+		PUBLIC ${CMAKE_SOURCE_DIR}/Map/Layers
+		PUBLIC ${CMAKE_SOURCE_DIR}/Entity)

@@ -8,7 +8,7 @@ void Tileset::load(Json::Value root)
 	m_tilesize = sf::Vector2i(root["tilewidth"].asInt(), root["tileheight"].asInt());
 	m_gridsize = sf::Vector2i(root["imagewidth"].asInt() / m_tilesize.x, 
 		root["imageheight"].asInt() / m_tilesize.y);
-	std::string source = "data/maps/" + root["image"].asString();
+	std::string source = "../SFML-rpg/data/maps/" + root["image"].asString();
 	if (!m_texture.loadFromFile(source))
 	{
 		exit(100);

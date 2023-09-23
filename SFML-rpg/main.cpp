@@ -13,7 +13,7 @@ int main()
 	std::wstring str;
 
 	Map map;
-	map.load("data/maps/test.json", window.getSize());
+	map.load("../SFML-rpg/data/maps/test.json", window.getSize());
 
 	Player player;
 
