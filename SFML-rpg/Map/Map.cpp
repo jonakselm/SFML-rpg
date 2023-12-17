@@ -259,7 +259,7 @@ void Map::loadTiles()
 					tile->setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y) - chunk.getPosition());
 					chunk.addTile(std::move(tile));
 
-					if (const auto framePtr = t.getAnimationFrames(localId))
+					if (const auto *framePtr = t.getAnimationFrames(localId))
 					{
 						animator.addTile(Animation(*chunk.getTiles().back(), *framePtr, 0, sf::milliseconds(0)));
 						if (!chunk.hasAnimation())
