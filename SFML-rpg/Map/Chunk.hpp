@@ -7,10 +7,12 @@ public:
 	Chunk(sf::Vector2i chunkGridsize, sf::Vector2i tilesize, sf::Vector2f gridpos);
 
 	void addTile(TextureTile &&tile);
+	std::vector<TextureTile> &getTiles();
 
 	void draw(sf::RenderTarget &target, sf::RenderStates states = sf::RenderStates::Default) const;
-	void update();
+	void drawToChunk();
 
+	void setAnimated(bool isAnimated);
 	bool hasAnimation() const;
 
 	void setGridSize(sf::Vector2i size);

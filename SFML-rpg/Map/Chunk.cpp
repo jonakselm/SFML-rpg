@@ -17,17 +17,29 @@ void Chunk::addTile(TextureTile &&tile)
 	m_tiles.push_back(tile);
 }
 
+std::vector<TextureTile> &Chunk::getTiles() 
+{
+	return m_tiles;
+}
+
 void Chunk::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
 	target.draw(m_sprite, states);
 }
 
-void Chunk::update()
+void Chunk::drawToChunk()
 {
 	m_texture.clear(sf::Color::Transparent);
 	for (const auto &tile : m_tiles)
+	{
 		m_texture.draw(tile);
+	}
 	m_texture.display();
+}
+
+void Chunk::setAnimated(bool isAnimated)
+{
+	m_hasAnimation = isAnimated;
 }
 
 bool Chunk::hasAnimation() const

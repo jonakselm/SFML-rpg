@@ -5,6 +5,7 @@
 #include "Utility.hpp"
 #include "Layer.hpp"
 #include "Chunk.hpp"
+#include "Animator.hpp"
 
 class Map
 {
@@ -33,6 +34,7 @@ private:
 private:
 	sf::Clock m_clock;
 	sf::Time m_time;
+	Animator animator;
 	// Sprites have the size of the initial texture
 	// Sprites are small and efficient objects
 	//sf::Sprite m_mapSprite, m_minimapSprite;

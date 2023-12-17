@@ -1,6 +1,14 @@
 #pragma once
 #include <memory>
 
+
+struct Frame
+{
+	sf::IntRect textureRect;
+	sf::Time dur;
+	int localId;
+};
+
 template <typename T>
 class DynArray
 {

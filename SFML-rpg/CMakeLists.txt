@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(SFML-rpg)
 
-add_executable(SFML-rpg main.cpp stdafx.cpp Map/Chunk.cpp Map/Layer.cpp
+add_executable(SFML-rpg main.cpp stdafx.cpp Animator.cpp
+		Map/Chunk.cpp Map/Layer.cpp
 		Map/Map.cpp Map/TextureTile.cpp Map/Tileset.cpp
 		Entity/Entity.cpp Entity/Player.cpp)
 target_precompile_headers(SFML-rpg PUBLIC stdafx.h)
