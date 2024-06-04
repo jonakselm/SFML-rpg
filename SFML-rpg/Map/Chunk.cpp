@@ -12,12 +12,12 @@ Chunk::Chunk(sf::Vector2i chunkGridsize, sf::Vector2i tilesize, sf::Vector2f gri
 	m_sprite.setPosition(pos);
 }
 
-void Chunk::addTile(TextureTile &&tile)
+void Chunk::addTile(std::unique_ptr<TextureTile> &&tile)
 {
-	m_tiles.push_back(tile);
+	m_tiles.push_back(std::move(tile));
 }
 
-std::vector<TextureTile> &Chunk::getTiles() 
+std::vector<std::unique_ptr<TextureTile>> &Chunk::getTiles()
 {
 	return m_tiles;
 }
@@ -32,7 +32,7 @@ void Chunk::drawToChunk()
 	m_texture.clear(sf::Color::Transparent);
 	for (const auto &tile : m_tiles)
 	{
-		m_texture.draw(tile);
+		m_texture.draw(*tile);
 	}
 	m_texture.display();
 }

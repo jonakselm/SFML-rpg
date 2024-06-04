@@ -26,7 +26,7 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 	}
 	else
 	{
-		std::cout << "Failed to load map file: \"" << filename << "\"" << "current dir is: "
+		std::cout << "Failed to load map file: \"" << filename << "\" current dir is: "
 			<< std::filesystem::current_path() << std::endl; 
 	}
 
@@ -242,26 +242,26 @@ void Map::loadTiles()
 				int tileData = layer.getTile(sf::Vector2i(x, y));
 				if (tileData != 0)
 				{
-					TextureTile tile;
+					auto tile = std::make_unique<TextureTile>();
 					const Tileset &t = *std::find_if(m_tilesets.rbegin(), m_tilesets.rend(),
 						[tileData](const Tileset &tileset)
 						{
 							return tileset.getFirstgid() <= tileData;
 						});
 					
-					tile.setTexture(t.getTexture());
+					tile->setTexture(t.getTexture());
 					int localId = tileData - t.getFirstgid();
 					sf::Vector2i tilesize = t.getTilesize();
 					auto topLeft = sf::Vector2i(localId % t.getSize().x * tilesize.x,
 						localId / t.getSize().x * tilesize.y);
-					tile.setTextureRect(sf::IntRect(topLeft, tilesize));
+					tile->setTextureRect(sf::IntRect(topLeft, tilesize));
 					Chunk &chunk = *m_chunks[index];
-					tile.setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y) - chunk.getPosition());
+					tile->setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y) - chunk.getPosition());
 					chunk.addTile(std::move(tile));
 
 					if (const auto framePtr = t.getAnimationFrames(localId))
 					{
-						animator.addTile(Animation(chunk.getTiles().back(), *framePtr, 0, sf::milliseconds(0)));
+						animator.addTile(Animation(*chunk.getTiles().back(), *framePtr, 0, sf::milliseconds(0)));
 						if (!chunk.hasAnimation())
 							chunk.setAnimated(true);
 					}
