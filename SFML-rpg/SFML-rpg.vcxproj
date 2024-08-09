@@ -87,7 +87,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);$(ProjectDir)/Entity;$(ProjectDir)/Map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);$(ProjectDir)/Entity;$(ProjectDir)/Map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -129,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);$(ProjectDir)/Entity;$(ProjectDir)/Map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -153,7 +153,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML\include;$(SolutionDir)..\jsoncpp\include;$(ProjectDir);$(ProjectDir)/Entity;$(ProjectDir)/Map;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -175,8 +175,8 @@
     <ClCompile Include="HighAccuracyClock.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map/Map.cpp" />
-    <ClCompile Include="Map\Layers\Layer.cpp" />
-    <ClCompile Include="Map\Layers\Chunk.cpp" />
+    <ClCompile Include="Map\Layer.cpp" />
+    <ClCompile Include="Map\Chunk.cpp" />
     <ClCompile Include="Map\Tileset.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -191,8 +191,8 @@
     <ClInclude Include="Entity\Player.hpp" />
     <ClInclude Include="HighAccuracyClock.hpp" />
     <ClInclude Include="Map/Map.hpp" />
-    <ClInclude Include="Map\Layers\Layer.hpp" />
-    <ClInclude Include="Map\Layers\Chunk.hpp" />
+    <ClInclude Include="Map\Layer.hpp" />
+    <ClInclude Include="Map\Chunk.hpp" />
     <ClInclude Include="Map\Tileset.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Map\TextureTile.hpp" />
