@@ -5,11 +5,8 @@
 #include "Utility.hpp"
 #include "Layer.hpp"
 #include "Chunk.hpp"
-<<<<<<< Updated upstream
 #include "Animator.hpp"
-=======
 #include <filesystem>
->>>>>>> Stashed changes
 
 class Map
 {
