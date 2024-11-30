@@ -7,7 +7,42 @@
 
 int main()
 {
+<<<<<<< Updated upstream
 	try
+=======
+	// TODO: Use chunks, because of efficiency
+	sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML-rpg");
+	window.setFramerateLimit(60);
+
+	std::wstring str;
+	std::filesystem::path sourcePath = std::filesystem::current_path();
+	while (true)
+	{
+		auto testPath = sourcePath/"SFML-rpg";
+		if (std::filesystem::exists(testPath) && std::filesystem::is_directory(testPath))
+		{
+			sourcePath = testPath;
+			break;
+		}
+		sourcePath = sourcePath.parent_path();
+		std::cout << sourcePath << std::endl;
+	}
+
+	Map map;
+	map.load(sourcePath, "data/maps/test.json", window.getSize());
+
+	Player player;
+
+	map.addPlayer(&player);
+
+    sf::Clock clock;
+    sf::Time time;
+	sf::Time totalElapsedTime;
+	int iterations = 0;
+	float speed = 32.f;
+
+	while (window.isOpen())
+>>>>>>> Stashed changes
 	{
 		// TODO: Use chunks, because of efficiency
 		sf::RenderWindow window(sf::VideoMode(1080, 720), "SFML-rpg");

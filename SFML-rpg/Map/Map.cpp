@@ -3,7 +3,6 @@
 #include <SFML/System/Time.hpp>
 #include <iostream>
 #include <cmath>
-#include <filesystem>
 
 Map::Map()
 {
@@ -13,12 +12,11 @@ Map::~Map()
 {
 }
 
-bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
+bool Map::load(const std::filesystem::path &sourcePath, const std::string &filename, const sf::Vector2u &windowSize)
 {
 	Json::Value root;
 
-	std::ifstream file(filename);
-	
+	std::ifstream file(sourcePath/filename);
 
 	if (file.is_open())
 	{
@@ -66,7 +64,7 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 	}
 
 	m_time = m_clock.restart();
-	loadTileset(root);
+	loadTileset(sourcePath, root);
 	m_time = m_clock.restart();
 
 	std::cout << "Loading tileset: " << m_time.asSeconds() << "s" << std::endl;
@@ -139,7 +137,7 @@ void Map::draw(sf::RenderTarget &target) const
 	//target.draw(m_minimapSprite);
 }
 
-void Map::loadTileset(const Json::Value &root)
+void Map::loadTileset(const std::filesystem::path &sourcePath, const Json::Value &root)
 {
 	for (auto &val : root["tilesets"])
 	{
@@ -154,8 +152,7 @@ void Map::loadTileset(const Json::Value &root)
 		else if (!val["source"].empty())
 		{
 			Json::Value newVal;
-			std::string sourcePath = "../SFML-rpg/data/maps/" + val["source"].asString();
-			std::ifstream file(sourcePath);
+			std::ifstream file(sourcePath/"data/maps"/val["source"].asString());
 			file >> newVal;
 
 
