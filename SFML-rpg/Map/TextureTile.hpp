@@ -5,6 +5,15 @@ class TextureTile : public sf::Drawable, public sf::Transformable
 public:
 	TextureTile();
 	~TextureTile();
+    TextureTile(TextureTile &) = delete;
+    TextureTile(const TextureTile &) = delete;
+    TextureTile(TextureTile &&) = delete;
+    TextureTile(const TextureTile &&) = delete;
+
+    TextureTile operator=(TextureTile &) = delete;
+    TextureTile operator=(const TextureTile &) = delete;
+    TextureTile operator=(TextureTile &&) = delete;
+    TextureTile operator=(const TextureTile &&) = delete;
 
 	void update();
 

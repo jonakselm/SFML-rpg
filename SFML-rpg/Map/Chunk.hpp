@@ -6,11 +6,13 @@ class Chunk
 public:
 	Chunk(sf::Vector2i chunkGridsize, sf::Vector2i tilesize, sf::Vector2f gridpos);
 
-	void addTile(TextureTile &&tile);
+	void addTile(std::unique_ptr<TextureTile> &&tile);
+	std::vector<std::unique_ptr<TextureTile>> &getTiles();
 
 	void draw(sf::RenderTarget &target, sf::RenderStates states = sf::RenderStates::Default) const;
-	void update();
+	void drawToChunk();
 
+	void setAnimated(bool isAnimated);
 	bool hasAnimation() const;
 
 	void setGridSize(sf::Vector2i size);
@@ -22,7 +24,7 @@ public:
 private:
 	sf::RenderTexture m_texture;
 	sf::Sprite m_sprite;
-	std::vector<TextureTile> m_tiles;
+	std::vector<std::unique_ptr<TextureTile>> m_tiles;
 	bool m_hasAnimation = false;
 	sf::Vector2i m_gridSize;
 };

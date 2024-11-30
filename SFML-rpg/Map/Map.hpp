@@ -5,6 +5,8 @@
 #include "Utility.hpp"
 #include "Layer.hpp"
 #include "Chunk.hpp"
+#include "Animator.hpp"
+#include <filesystem>
 
 class Map
 {
@@ -15,7 +17,7 @@ public:
 	Map(const Map &) = delete;
 	Map(Map &) = delete;
 
-	bool load(const std::string &filename, const sf::Vector2u &windowSize);
+	bool load(const std::filesystem::path &sourcePath, const std::string &filename, const sf::Vector2u &windowSize);
 
 	void update(const sf::Time &elapsedTime);
 
@@ -24,7 +26,7 @@ public:
 	void draw(sf::RenderTarget &target) const;
 
 private:
-	void loadTileset(const Json::Value &root);
+	void loadTileset(const std::filesystem::path &sourcePath, const Json::Value &root);
 	void loadLayer(const Json::Value &root, const std::string &layerGroup = "none");
 	void loadTiles();
 	// Only chunks within the view (with a threshold of half a view size) are rendered
@@ -33,6 +35,7 @@ private:
 private:
 	sf::Clock m_clock;
 	sf::Time m_time;
+	Animator animator;
 	// Sprites have the size of the initial texture
 	// Sprites are small and efficient objects
 	//sf::Sprite m_mapSprite, m_minimapSprite;

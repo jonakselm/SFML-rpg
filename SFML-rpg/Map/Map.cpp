@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Map.hpp"
+#include <SFML/System/Time.hpp>
 #include <iostream>
 #include <cmath>
-#include <filesystem>
 
 Map::Map()
 {
@@ -12,12 +12,11 @@ Map::~Map()
 {
 }
 
-bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
+bool Map::load(const std::filesystem::path &sourcePath, const std::string &filename, const sf::Vector2u &windowSize)
 {
 	Json::Value root;
 
-	std::ifstream file(filename);
-	
+	std::ifstream file(sourcePath/filename);
 
 	if (file.is_open())
 	{
@@ -25,7 +24,8 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 	}
 	else
 	{
-		std::cout << "Failed to load map file: \"" << filename << "\"" << "current dir is: " << std::filesystem::current_path() << std::endl; 
+		std::cout << "Failed to load map file: \"" << filename << "\" current dir is: "
+			<< std::filesystem::current_path() << std::endl; 
 	}
 
 	m_mapsize.x = root["width"].asInt();
@@ -64,7 +64,7 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 	}
 
 	m_time = m_clock.restart();
-	loadTileset(root);
+	loadTileset(sourcePath, root);
 	m_time = m_clock.restart();
 
 	std::cout << "Loading tileset: " << m_time.asSeconds() << "s" << std::endl;
@@ -82,7 +82,7 @@ bool Map::load(const std::string &filename, const sf::Vector2u &windowSize)
 	return true;
 }
 
-void Map::update(const sf::Time &elapsedTime)
+void Map::update(const sf::Time &dt)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		m_gameView.move({ 0, -1 });
@@ -94,13 +94,17 @@ void Map::update(const sf::Time &elapsedTime)
 		m_gameView.move({ 1, 0 });
 
 	//m_texture.clear();
+	animator.update(dt);
+	
 	for (auto &chunk : m_chunks)
 	{
 		if (isInView(*chunk))
 		{
 			// TODO: Support for animations
 			if (chunk->hasAnimation())
-				chunk->update();
+			{
+				chunk->drawToChunk();
+			}
 			//for (int i = 0; i < 10000; i++)
 				//chunk->draw(m_texture);
 		}
@@ -133,7 +137,7 @@ void Map::draw(sf::RenderTarget &target) const
 	//target.draw(m_minimapSprite);
 }
 
-void Map::loadTileset(const Json::Value &root)
+void Map::loadTileset(const std::filesystem::path &sourcePath, const Json::Value &root)
 {
 	for (auto &val : root["tilesets"])
 	{
@@ -148,8 +152,7 @@ void Map::loadTileset(const Json::Value &root)
 		else if (!val["source"].empty())
 		{
 			Json::Value newVal;
-			std::string sourcePath = "../SFML-rpg/data/maps/" + val["source"].asString();
-			std::ifstream file(sourcePath);
+			std::ifstream file(sourcePath/"data/maps"/val["source"].asString());
 			file >> newVal;
 
 
@@ -202,13 +205,14 @@ void Map::loadLayer(const Json::Value &root, const std::string &layerGroup)
 void Map::loadTiles()
 {
 	// Name is not descriptive enough, but this means the amounts of chunks in each axis
-	int chunksWidth = std::ceil(float(m_mapsize.x)) / m_chunkSize.x;
-	int chunksHeight = (int)std::ceil(float(m_mapsize.y)) / m_chunkSize.y;
+	int numChunksX = std::ceil(float(m_mapsize.x)) / m_chunkSize.x;
+	int numChunksY = (int)std::ceil(float(m_mapsize.y)) / m_chunkSize.y;
 	for (int z = 0; z < 2; z++)
-		for (int y = 0; y < chunksHeight; y++)
-			for (int x = 0; x < chunksWidth; x++)
+		for (int y = 0; y < numChunksY; y++)
+			for (int x = 0; x < numChunksX; x++)
 				m_chunks.emplace_back(std::make_unique<Chunk>(m_chunkSize, m_tilesize,
 					sf::Vector2f(x, y)));
+
 	for (const auto &layer : m_layers)
 	{
 		int chunkZ = 0;
@@ -218,39 +222,52 @@ void Map::loadTiles()
 		for (int y = 0; y < layer.getSize().y; y++)
 		{
 			int chunkX = 0;
-			if (y * m_tilesize.y >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth +
-				(size_t)chunkZ * chunksWidth * chunksHeight]->getBottomRight().y)
+			unsigned int index = (size_t)chunkX + (size_t)chunkY * numChunksX +
+				(size_t)chunkZ * numChunksX * numChunksY;
+			if (y * m_tilesize.y >= m_chunks[index]->getBottomRight().y)
+			{
 				chunkY++;
+				index += numChunksX;
+			}
 			for (int x = 0; x < layer.getSize().x; x++)
 			{
-				if (x * m_tilesize.x >= m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth +
-					(size_t)chunkZ * chunksWidth * chunksHeight]->getBottomRight().x)
+				if (x * m_tilesize.x >= m_chunks[index]->getBottomRight().x)
+				{
 					chunkX++;
+					index++;
+				}
 				int tileData = layer.getTile(sf::Vector2i(x, y));
 				if (tileData != 0)
 				{
-					TextureTile tile;
+					auto tile = std::make_unique<TextureTile>();
 					const Tileset &t = *std::find_if(m_tilesets.rbegin(), m_tilesets.rend(),
 						[tileData](const Tileset &tileset)
 						{
 							return tileset.getFirstgid() <= tileData;
 						});
-					tile.setTexture(t.getTexture());
+					
+					tile->setTexture(t.getTexture());
 					int localId = tileData - t.getFirstgid();
 					sf::Vector2i tilesize = t.getTilesize();
 					auto topLeft = sf::Vector2i(localId % t.getSize().x * tilesize.x,
 						localId / t.getSize().x * tilesize.y);
-					tile.setTextureRect(sf::IntRect(topLeft, tilesize));
-					Chunk &chunk = *m_chunks[(size_t)chunkX + (size_t)chunkY * chunksWidth +
-						(size_t)chunkZ * chunksWidth * chunksHeight];
-					tile.setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y) - chunk.getPosition());
+					tile->setTextureRect(sf::IntRect(topLeft, tilesize));
+					Chunk &chunk = *m_chunks[index];
+					tile->setPosition(sf::Vector2f(x * tilesize.x, y * tilesize.y) - chunk.getPosition());
 					chunk.addTile(std::move(tile));
+
+					if (const auto *framePtr = t.getAnimationFrames(localId))
+					{
+						animator.addTile(Animation(*chunk.getTiles().back(), *framePtr, 0, sf::milliseconds(0)));
+						if (!chunk.hasAnimation())
+							chunk.setAnimated(true);
+					}
 				}
 			}
 		}
 	}
 	for (auto &chunk : m_chunks)
-		chunk->update();
+		chunk->drawToChunk();
 }
 
 bool Map::isInView(const Chunk &chunk) const

@@ -5,12 +5,16 @@
     },
     "activeFile": "test.json",
     "expandedProjectPaths": [
-        "C:/Users/jonak/source/repos/SFML-rpg/SFML-rpg/data",
+        "/home/jonaksel/Documents/Programming/SFML-rpg/SFML-rpg/data",
         "templates",
-        "."
+        ".",
+        "C:/Users/jonak/source/repos/SFML-rpg/SFML-rpg/data"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "": {
+            "dynamicWrapping": false
+        },
         "C:/Users/jonak/source/repos/Pokemon Darkness Fall/Graphics/Male Player Sprite/animation_test.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -26,11 +30,11 @@
             "scaleInEditor": 0.33
         },
         "someMap.json": {
-            "scale": 0.75,
+            "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 799.9999999999999,
-                "y": 799.3333333333333
+                "x": 799.5,
+                "y": 799.5
             }
         },
         "someOthertest.json": {
@@ -43,16 +47,17 @@
         },
         "test.json": {
             "expandedGroupLayers": [
-                18
+                3,
+                6
             ],
             "expandedObjectLayers": [
                 5
             ],
             "scale": 1,
-            "selectedLayer": 0,
+            "selectedLayer": 12,
             "viewCenter": {
-                "x": 341,
-                "y": -2
+                "x": 1599.5,
+                "y": 1599.5
             }
         },
         "test.json#EmbeddedCollection": {
@@ -69,12 +74,23 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "theUltimateTestMap.json": {
+            "scale": 12.216406249999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 31.965210718168446,
+                "y": 31.883353584447146
+            }
+        },
+        "theUltimateTestMap.json#cave": {
+            "scaleInDock": 1
+        },
         "untitled.json": {
             "scale": 5.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 41.27272727272727,
-                "y": 53.99999999999999
+                "x": 22.181818181818183,
+                "y": 32.090909090909086
             }
         },
         "untitled.json#mountain_landscape": {
@@ -82,22 +98,33 @@
         }
     },
     "frame.defaultDuration": 2000,
+    "last.exportedFilePath": "/home/jonaksel/Documents/Programming/SFML-rpg/SFML-rpg/data/maps",
+    "loadedWorlds": [
+        "/home/jonaksel/Documents/Programming/SFML-rpg/SFML-rpg/data/maps/testWorld.world"
+    ],
     "map.height": 2,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "json",
     "map.width": 2,
     "openFiles": [
         "test.json",
-        "noge.json"
+        "noge.json",
+        "someMap.json",
+        "untitled.json",
+        "someOthertest.json",
+        "mountain_landscape.json",
+        "theUltimateTestMap.json"
     ],
     "project": "SFML-rpg.tiled-project",
     "property.type": "int",
     "recentFiles": [
+        "theUltimateTestMap.json",
+        "mountain_landscape.json",
+        "someOthertest.json",
+        "untitled.json",
+        "someMap.json",
         "noge.json",
         "test.json",
-        "untitled.json",
-        "someOthertest.json",
-        "mountain_landscape.json",
-        "someMap.json",
         "C:/Users/jonak/source/repos/Pokemon Darkness Fall/Graphics/Male Player Sprite/animation_test.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
