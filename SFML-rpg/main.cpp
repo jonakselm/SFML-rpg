@@ -15,16 +15,20 @@ int main()
 
 		std::wstring str;
 		std::filesystem::path sourcePath = std::filesystem::current_path();
-		while (true)
+		for (int i = 0; i < 50; i++)
 		{
-			auto testPath = sourcePath/"SFML-rpg";
-			if (std::filesystem::exists(testPath) && std::filesystem::is_directory(testPath))
+			sourcePath /= "SFML-rpg";
+			if (std::filesystem::exists(sourcePath) && std::filesystem::is_directory(sourcePath))
 			{
-				sourcePath = testPath;
 				break;
 			}
-			sourcePath = sourcePath.parent_path();
+			sourcePath = sourcePath.parent_path().parent_path();
 			std::cout << sourcePath << std::endl;
+		}
+		if (!std::filesystem::exists(sourcePath) || std::filesystem::exists(sourcePath/"Docs"))
+		{
+			std::cout << "Source path couldn't be located" << std::endl;
+			std::exit(-1);
 		}
 
 		Map map;
