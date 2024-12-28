@@ -44,10 +44,12 @@ IF (RPG_FETCH_LIBS)
 	# Link jsoncpp
 	message("Linking JSONCPP")
 	IF (BUILD_SHARED_LIBS)
-		target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_lib)
+		set(RPG_INTERNAL_JSONCPP jsoncpp_lib)
 	ELSE()
-		target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_static)
+		set(RPG_INTERNAL_JSONCPP jsoncpp_static)
 	ENDIF()
+
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${RPG_INTERNAL_JSONCPP})
 ELSE()	
 	IF (WIN32)
 		# Make visible in cmake gui
