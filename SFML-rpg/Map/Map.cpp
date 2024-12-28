@@ -145,7 +145,7 @@ void Map::loadTileset(const std::filesystem::path &sourcePath, const Json::Value
 		if (!val["image"].empty())
 		{
 			m_tilesets.emplace_back();
-			m_tilesets.back().load(val);
+			m_tilesets.back().load(sourcePath, val);
 			m_tilesets.back().setFirstgid(val["firstgid"].asInt());
 		}
 		// Non-embedded
@@ -161,7 +161,7 @@ void Map::loadTileset(const std::filesystem::path &sourcePath, const Json::Value
 			// Tilebased
 			if (newVal["grid"].empty())
 			{
-				m_tilesets.back().load(newVal);
+				m_tilesets.back().load(sourcePath, newVal);
 			}
 			// Imagebased
 			else

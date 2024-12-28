@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "Tileset.hpp"
 
-void Tileset::load(Json::Value root)
+void Tileset::load(const std::filesystem::path &sourcePath, Json::Value root)
 {
 	m_name = root["name"].asString();
 	m_columns = root["columns"].asInt();
 	m_tilesize = sf::Vector2i(root["tilewidth"].asInt(), root["tileheight"].asInt());
 	m_gridsize = sf::Vector2i(root["imagewidth"].asInt() / m_tilesize.x, 
 		root["imageheight"].asInt() / m_tilesize.y);
-	std::string source = "../SFML-rpg/data/maps/" + root["image"].asString();
-	if (!m_texture.loadFromFile(source))
+	std::filesystem::path source = sourcePath/"data/maps/"/root["image"].asString();
+	if (!m_texture.loadFromFile(source.string()))
 	{
 		exit(100);
 	}

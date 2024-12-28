@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "Player.hpp"
 
-Player::Player()
+Player::Player(const std::filesystem::path &sourcePath)
 	:
 	m_weapon{Weapon::Style::None, Weapon::State::Inactive},
 	m_dir(Direction::Right)
 {
 	m_size = { 32, 32 };
 
-	m_texture.loadFromFile("../SFML-rpg/data/Player sprites/playerSprite_32x32.png");
+	m_texture.loadFromFile((sourcePath/"data/Player sprites/playerSprite_32x32.png").string());
 	m_sprite.setTexture(m_texture);
 }
 

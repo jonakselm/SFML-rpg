@@ -1,11 +1,12 @@
 #pragma once
 #include "Utility.hpp"
 #include <unordered_map>
+#include <filesystem>
 
 class Tileset
 {
 public:
-	void load(Json::Value root);
+	void load(const std::filesystem::path& sourcePath, Json::Value root);
 
 	void setFirstgid(int firstgid);
 	int getFirstgid() const;

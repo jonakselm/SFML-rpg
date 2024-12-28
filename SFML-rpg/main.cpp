@@ -34,7 +34,7 @@ int main()
 		Map map;
 		map.load(sourcePath, "data/maps/test.json", window.getSize());
 
-		Player player;
+		Player player(sourcePath);
 
 		map.addPlayer(&player);
 

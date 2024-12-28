@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.hpp"
+#include <filesystem>
 
 struct Weapon
 {
@@ -33,7 +34,7 @@ public:
 		Up
 	};
 public:
-	Player();
+	Player(const std::filesystem::path &sourcePath);
 	~Player();
 
 	void update(const sf::Time &elapsedTime);
