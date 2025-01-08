@@ -1,6 +1,10 @@
 #Ignore cmake build directory
 build
 cmake-build-*
+#Ignore emacs auto generated files (auto saves and backups)
+*\~
+\#*\#
+
 #Ignore .idea from JetBrains products
 .idea
 #Ignore thumbnails created by Windows

@@ -8,10 +8,10 @@ set(RPG_FETCH_LIBS 0 CACHE BOOL "Fetch libraries from upstream instead of using 
 
 project(SFML-rpg)
 
-add_executable(SFML-rpg main.cpp stdafx.cpp Animator.cpp
-		Map/Chunk.cpp Map/Layer.cpp
-		Map/Map.cpp Map/TextureTile.cpp Map/Tileset.cpp
-		Entity/Entity.cpp Entity/Player.cpp)
+add_executable(SFML-rpg source/main.cpp source/stdafx.cpp source/Animator.cpp
+		source/Map/Chunk.cpp source/Map/Layer.cpp
+		source/Map/Map.cpp source/Map/TextureTile.cpp source/Map/Tileset.cpp
+		source/Entity/Entity.cpp source/Entity/Player.cpp)
 
 IF (RPG_FETCH_LIBS)
 	option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
@@ -98,14 +98,13 @@ ELSE()
 	target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp)
 ENDIF()
 
-target_precompile_headers(SFML-rpg PUBLIC stdafx.h)
+target_precompile_headers(SFML-rpg PUBLIC source/stdafx.h)
 
 
 
 target_include_directories(${PROJECT_NAME}
-	PRIVATE ${CMAKE_SOURCE_DIR}
-	PRIVATE ${CMAKE_SOURCE_DIR}/Map
-	PRIVATE ${CMAKE_SOURCE_DIR}/Map/Layers
-	PRIVATE ${CMAKE_SOURCE_DIR}/Entity)
-
+	PRIVATE ${CMAKE_SOURCE_DIR}/source
+	PRIVATE ${CMAKE_SOURCE_DIR}/source/Map
+	PRIVATE ${CMAKE_SOURCE_DIR}/source/Map/Layers
+	PRIVATE ${CMAKE_SOURCE_DIR}/source/Entity)
 

@@ -17,7 +17,7 @@ int main()
 		std::filesystem::path sourcePath = std::filesystem::current_path();
 		for (int i = 0; i < 50; i++)
 		{
-			sourcePath /= "SFML-rpg";
+			sourcePath /= "source";
 			if (std::filesystem::exists(sourcePath) && std::filesystem::is_directory(sourcePath))
 			{
 				break;
